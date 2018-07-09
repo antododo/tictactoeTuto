@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+// TUTO
+import Web3, { providers } from 'web3';
+var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
 
 function Square (props) {
   return (
@@ -52,7 +55,63 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
+      //TUTO
+      contract: null,
+      userAccount: null,
     };
+
+    //TUTO
+    // Binding
+    this.SendWinner = this.SendWinner.bind(this);
+
+  }
+
+  //TUTO
+  componentDidMount(){
+    // Get accounts
+    console.log("Getting account")
+    web3.eth.getAccounts((error, accounts) => {
+      // Update state with the result.
+      this.setState({userAccount: accounts[0] })
+      console.log("user account is: "+ this.state.userAccount)
+    })
+
+    // Get contract
+    var contractAddress = "0x8cdaf0cd259887258bc13a92c0a6da92698644c0";
+    var contractABI = [
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_newWinner",
+            "type": "uint256"
+          }
+        ],
+        "name": "ChangeWinner",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "GetWinner",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ];
+
+    this.setState({
+      contract: new web3.eth.Contract(contractABI, contractAddress)
+    })
   }
 
   handleClick(i) {
@@ -78,6 +137,16 @@ class Game extends React.Component {
       xIsNext: (step % 2) === 0,
     });
   }
+
+  //TUTO
+  SendWinner(){
+
+  console.log("SEND WINNER")
+  this.state.contract.methods.GetWinner().call()
+  .then((result)=>{
+    console.log(result)
+  })
+}
 
   render() {
     const history = this.state.history;
@@ -105,6 +174,7 @@ class Game extends React.Component {
 
     return (
       <div className="game">
+      <button onClick={this.SendWinner}>TEST</button>
         <div className="game-board">
           <Board
           squares={current.squares}
