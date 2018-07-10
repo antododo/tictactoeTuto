@@ -64,6 +64,7 @@ class Game extends React.Component {
     //TUTO
     // Binding
     this.SendWinner = this.SendWinner.bind(this);
+    this.BetOn = this.BetOn.bind(this);
 
   }
 
@@ -86,20 +87,29 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0x9fbda871d559710256a2502a2517b794b482db40";
+    var contractAddress = "0x82d50ad3c1091866e258fd0f1a7cc9674609d254";
     var contractABI = [
       {
-        "constant": true,
-        "inputs": [],
-        "name": "GetWinner",
-        "outputs": [
+        "constant": false,
+        "inputs": [
           {
-            "name": "",
+            "name": "_betWinner",
             "type": "string"
           }
         ],
+        "name": "BetOn",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "BettingResult",
+        "outputs": [],
         "payable": false,
-        "stateMutability": "view",
+        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -114,6 +124,40 @@ class Game extends React.Component {
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "constructor"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "GetBet",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "GetWinner",
+        "outputs": [
+          {
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
         "type": "function"
       }
     ]
@@ -156,6 +200,12 @@ class Game extends React.Component {
 
   }
 
+  //TUTO
+  BetOn(){
+    let bet = this.state.web3.utils.toWei('3', 'ether');
+    this.state.contract.methods.BetOn("X").send({from: this.state.userAccount, value: bet})
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -184,6 +234,9 @@ class Game extends React.Component {
 
     return (
       <div className="game">
+        <div>
+          <button onClick={this.BetOn}>Bet 3ETH on X</button>
+        </div>
         <div className="game-board">
           <Board
           squares={current.squares}
