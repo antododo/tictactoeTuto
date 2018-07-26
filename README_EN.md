@@ -11,18 +11,18 @@ Part of the efforts to circumvent the secondary market was to include such virtu
 ### Gamers as early adopters
 But in-game tokens and assets introduced by game manufacturers are not cryptoeconomic tokens. Since the code converning the exchange is closed-source and the trading history is stored on centralized server, these tokens totaly lack transparency. For the average consumer, transparency is not that much of an issue, but for players having a lot of stake in the game, it can be a major concern. More and more gamers in the community start to be worried about transparency concerning there virtual assets and start to be sensible to the advantages blockchain technologies can bring to their gaming experience. It is not a surprise that the proportion of token holders in the gaming community is very high compared to the general public. 
 
-Gamers represents a huge bassin of potential early adopters for blockchain technologies and cryptocurrencies. Monetization of in-games assets is a convincing use-case of blockchain beyong Bitcoin and will eventually have a central role to play in the come back of the in-game asset virtual market that is currently preparing for 2019. Some analyst say that the price fluctuations of cryptocurrencies will eventually be dampened when the gaming industry starts adopting cryptocurrencies massively. According to the specialist, blockchain is at the edge of a first wave of mass adoption. This is very exiting times for the blockchain community. But we have to be prepared for this. So now, let's talk blockchain. 
+Gamers represents a huge bassin of potential early adopters for blockchain technologies and cryptocurrencies. Monetization of in-games assets is a convincing use-case of blockchain beyong Bitcoin and will eventually have a central role to play in the come back of the in-game asset virtual market that is currently preparing for 2019. Some analyst say that the price fluctuations of cryptocurrencies will eventually be dampened when the gaming industry starts adopting cryptocurrencies massively. According to the specialist, blockchain is at the edge of a first wave of mass adoption by the gamers. This is very exiting times for the blockchain community, but the 100 ETH question remains: is the technologie ready for such a float of users? 
 
 ### The current state of blockchain games
 Since the release of Ethereum in 2015, we have witnessed the emergence of games on the blockchain which fullfill these transparency requirements. The popularity of these blockchain games is undeniable (crypto zombies, crypto kitties, etc.) despite the obvious lack of gameplay of these early games and their primitive game mechanics. Blockchain games are here to stay and will become more and more diverse, complexe and fun beyong the simple "hot potato style" and speculative games. But technological constrains remain that hinders the devellopers from offering a satisfying user experience to the player. These concerns are at the hearth of wide spread blockchain adoption in the near future:
 
-1. Transaction fees
-2. Transaction rate
-3. Private key and account management
+1. Transaction fees: how do you pay your miners who are responsible for the network security?
+2. Transaction rate: the ever calling question of scalability
+3. Private key and account management: can you really trust your users to keep their private key safe?
 
 ## 2. Tutorial: building a simple tic tac toe on the blockchain
 
-Through this workshop, we will explore these issues by building a simple blockchain game, namely tic-tac-toe.
+Through this workshop, we will explore these issues by building a simple blockchain game, namely tic-tac-toe. We will compare three decentralized application (Dapp) devellopement plateform 
 
 ## 3. First speaker
 
@@ -30,7 +30,14 @@ Through this workshop, we will explore these issues by building a simple blockch
 
 ## 5. Concluding talk
 
-3. 
+### Comparing three Daap plateforms for game devellopement
+
+Now that we have some experience with the developpement of a blockchain game, we will now compare three decentralized application devellopement plateforms in terms of the three issues raised before, namely, transaction fees, transaction rate and account security.
+
+1. The Ethereum Network (currently Proof-of-work)
+2. The Loom Network (Delegated Proof-of-State over Ethereum)
+3. EOS (Delegated proof-of-stake
+
 
 blockchain technology might be the next big thing in that space. The gaming market is huge and e-sports popularity is growing.  
 
