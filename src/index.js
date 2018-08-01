@@ -87,7 +87,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0x82d50ad3c1091866e258fd0f1a7cc9674609d254";
+    var contractAddress = "0xa42eddbecc8cfd26e7cb98673d280ad1682d2758";
     var contractABI = [
       {
         "constant": false,
@@ -109,7 +109,7 @@ class Game extends React.Component {
         "name": "BettingResult",
         "outputs": [],
         "payable": false,
-        "stateMutability": "nonpayable",
+        "stateMutability": "payable",
         "type": "function"
       },
       {
@@ -197,6 +197,7 @@ class Game extends React.Component {
     console.log("SENDING WINNER")
     //Update new Winner
     this.state.contract.methods.SetWinner(_winner).send({from: this.state.userAccount})
+    this.state.contract.methods.BettingResult().send({from: this.state.userAccount})
 
   }
 

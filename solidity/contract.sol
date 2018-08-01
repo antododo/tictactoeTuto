@@ -25,9 +25,9 @@ contract Winner {
         return betAmount;
     }
     
-    function BettingResult() public {
+    function BettingResult() public payable {
         if(keccak256(winner)==keccak256(betWinner)){
-            msg.sender.transfer(betAmount);
+            msg.sender.transfer(betAmount*2);
         }
         else{
             // you Lose
