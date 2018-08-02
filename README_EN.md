@@ -27,13 +27,11 @@ But technological constrains remain that hinders the devellopers from offering a
 2. Transaction rate: the ever calling question of scalability
 3. Security: Can you really trust your users to keep their private key safe?
 
-To understand the interplay between these three fundamental constrains, we will have to explore the notion of consensus. 
+Through the following tutorial, we will build our first blockchain game. It will be an opportunity to experiment with these three technological constrains, understand the interplay between them and apprehend their impact on the user experience. After the tutorial, we will investigate tools available to devellopers to improve user experience on blockchain games. We will compare three devellopment plateforms (Ethereum, EOS and Loom Network) in terms of consensus, a design parameter specific the devellopment of decentralized applications (Dapps) on the blockchain. 
 
 ## 2. Tutorial: building a simple tic tac toe on the blockchain
 
-Through this workshop, we will explore the notion of consensus which directly impacts the first two constrains mentionned above. 
-
-issues by building a simple blockchain game, namely tic-tac-toe. We will compare three decentralized application (Dapp) devellopement plateform
+[...]
 
 ## 3. Comparing three Daap plateforms for game devellopement
 
