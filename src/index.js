@@ -59,6 +59,8 @@ class Game extends React.Component {
       //TUTO
       contract: null,
       userAccount: null,
+      XuserAccount: null,
+      OuserAccount: null,
       web3: web3
     };
 
@@ -74,22 +76,26 @@ class Game extends React.Component {
   componentDidMount(){
 
     // Get accounts
-    console.log("Getting user account")
+    console.log("Getting user accounts")
     web3.eth.getAccounts((error, accounts) => {
       // Update state with the result.
       this.setState({userAccount: accounts[0] })
       console.log("user account is: "+ this.state.userAccount)
+      this.setState({XuserAccount: accounts[0] })
+      console.log("X user account is: "+ this.state.XuserAccount)
+      this.setState({OuserAccount: accounts[1] })
+      console.log("O user account is: "+ this.state.XuserAccount)
     })
     .then(()=>{
-      // Getting user balance
-      web3.eth.getBalance(this.state.userAccount)
+      // Getting X user balance
+      web3.eth.getBalance(this.state.XuserAccount)
       .then((result)=>{
-        console.log("user balance is: " +result)
+        console.log("X user balance is: " + result)
       })
     })
 
     // Get contract
-    var contractAddress = "0xb1452be7b1a2ab112dce53fbb9bda076a68a7ae7";
+    var contractAddress = "0xcdd085d82c1e60829faaca5465be1701acf99703";
     var contractABI = [
       {
         "constant": false,
@@ -204,11 +210,16 @@ class Game extends React.Component {
 
   //TUTO
   SendWinner(_winner){
-    console.log("SENDING WINNER")
+    console.log("Winner is: " + _winner + ", SENDING WINNER")
     //Update new Winner
-    this.state.contract.methods.SetWinner(_winner).send({from: this.state.userAccount})
-    this.state.contract.methods.BettingResult().send({from: this.state.userAccount})
-
+    if(_winner === 'X') {
+      this.state.contract.methods.SetWinner(_winner).send({from: this.state.XuserAccount})
+      this.state.contract.methods.BettingResult().send({from: this.state.XuserAccount})
+    }
+    else{
+      this.state.contract.methods.SetWinner(_winner).send({from: this.state.OuserAccount})
+      this.state.contract.methods.BettingResult().send({from: this.state.OuserAccount})
+    }
   }
 
   //TUTO
@@ -219,7 +230,8 @@ class Game extends React.Component {
 
   BuyIn(){
     let bet = this.state.web3.utils.toWei('3', 'ether');
-    this.state.contract.methods.BuyIn().send({from: this.state.userAccount, value: bet});
+    this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet});
+    this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet});
   }
 
   render() {
@@ -261,8 +273,8 @@ class Game extends React.Component {
 
         </div>
         <div className="game-info">
-          <div>{"X: " + this.state.userAccount}</div>
-          <div>{"0: " + "No player yet"}</div>
+          <div>{"X: " + this.state.XuserAccount}</div>
+          <div>{"0: " + this.state.OuserAccount}</div>
           <div>{status}</div>
           <ol>{moves}</ol>
         </div>
