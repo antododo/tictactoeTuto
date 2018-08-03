@@ -11,7 +11,7 @@ contract Winner {
     
     function BuyIn() public payable {
         betAmount = betAmount + msg.value;
-        numberOfPlayers = numberOfPlayers + 1
+        numberOfPlayers = numberOfPlayers + 1;
     }
     
     function BetOn(string _betWinner) public payable {

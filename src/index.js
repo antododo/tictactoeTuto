@@ -109,7 +109,16 @@ class Game extends React.Component {
         "inputs": [],
         "name": "BettingResult",
         "outputs": [],
-        "payable": false,
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "BuyIn",
+        "outputs": [],
+        "payable": true,
         "stateMutability": "payable",
         "type": "function"
       },
@@ -162,7 +171,6 @@ class Game extends React.Component {
         "type": "function"
       }
     ]
-
 
     this.setState({
       contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
@@ -252,6 +260,8 @@ class Game extends React.Component {
 
         </div>
         <div className="game-info">
+          <div>{"X: " + this.state.userAccount}</div>
+          <div>{"0: " + "No player yet"}</div>
           <div>{status}</div>
           <ol>{moves}</ol>
         </div>
