@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 // TUTO
 import Web3 from 'web3';
-var web3 = new Web3(Web3.givenProvider || "http://localhost:7545");
+//var web3 = new Web3(Web3.givenProvider || "http://localhost:8545"); //To use at deployement: Metamask and Ropsten
+var web3 = new Web3("http://localhost:8545"); //To during dev.: use with Ganache
 
 function Square (props) {
   return (
@@ -87,7 +88,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0xa42eddbecc8cfd26e7cb98673d280ad1682d2758";
+    var contractAddress = "0xc6f05f5418a3e0fec2e63509c208b608f032b6a4";
     var contractABI = [
       {
         "constant": false,
