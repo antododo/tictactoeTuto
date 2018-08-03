@@ -66,6 +66,7 @@ class Game extends React.Component {
     // Binding
     this.SendWinner = this.SendWinner.bind(this);
     this.BetOn = this.BetOn.bind(this);
+    this.BuyIn = this.BuyIn.bind(this);
 
   }
 
@@ -88,7 +89,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0xc6f05f5418a3e0fec2e63509c208b608f032b6a4";
+    var contractAddress = "0xb1452be7b1a2ab112dce53fbb9bda076a68a7ae7";
     var contractABI = [
       {
         "constant": false,
@@ -213,12 +214,12 @@ class Game extends React.Component {
   //TUTO
   BetOn(){
     let bet = this.state.web3.utils.toWei('3', 'ether');
-    this.state.contract.methods.BetOn("X").send({from: this.state.userAccount, value: bet})
+    this.state.contract.methods.BetOn("X").send({from: this.state.userAccount, value: bet});
   }
 
   BuyIn(){
     let bet = this.state.web3.utils.toWei('3', 'ether');
-    this.state.contract.methods.BuyIn().send({from: this.state.userAccount, value: bet})
+    this.state.contract.methods.BuyIn().send({from: this.state.userAccount, value: bet});
   }
 
   render() {
