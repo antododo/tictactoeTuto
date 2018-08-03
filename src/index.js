@@ -208,6 +208,11 @@ class Game extends React.Component {
     this.state.contract.methods.BetOn("X").send({from: this.state.userAccount, value: bet})
   }
 
+  BuyIn(){
+    let bet = this.state.web3.utils.toWei('3', 'ether');
+    this.state.contract.methods.BuyIn().send({from: this.state.userAccount, value: bet})
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -237,7 +242,7 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div>
-          <button onClick={this.BetOn}>Bet 3ETH on X</button>
+          <button onClick={this.BuyIn}>Buy in (3ETH)</button>
         </div>
         <div className="game-board">
           <Board
