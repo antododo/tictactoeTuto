@@ -8,28 +8,28 @@
 
 ### **17h45** : Acceuil des participants 
 
-Les participants qui le souhaitent peuvent arriver quelques minutes à l'avance pour obtenir de l'aide avec l'installation des logiciels requis pour l'atelier ou pour obtenir des réponses à leur questions.
+Les participants qui le souhaitent peuvent arriver quelques minutes à l'avance pour obtenir de l'aide avec l'installation des pré-requis pour l'atelier ou pour obtenir des réponses à leur questions. Suivez ce [guide  pour l'installation des pré-requis](docs/installation.md).
 
 ### **18h00** : Présentation d'introduction: mise en contexte
 
-Intro : Mise en contexte + Sujet du tuto : UX (Rates + Fees = Consensus spectrum) [Security : Miners, Voting - Account, Private Key]
+Nous débuterons par l'histoire de [Brock Pierce](https://en.wikipedia.org/wiki/Brock_Pierce), dont les débuts tumultueux dans le monde du jeux vidéo l'ont préparés à devenir l'un des géants de la crypto. Il sera ensuite question de l'état actuels des jeux sur la Blockchain et des contraintes de la technologies qui impactent négativement l'expérience utilisateur. La retranscription de cette présentation est disponible sur Medium, Steemit et sur [GitHub](docs/intro_en.md).
 
-5min
-Pause
-AD
 ### **18h20** : Atelier pratique - création de votre premier jeu sur la blockchain
-Tuto
-DB
-### **19h05** : Comparaison des plateformes Ethereum Network, Loom Network et EOS pour le développement de jeux blockchain.
-Other platforms - EOS, LOOM
-?
-10min
-Speaker 1 
-AM
+
+Lors de cet atelier, vous allez créer votre premier jeu sur la blockchain: un jeu de tic tac toe avec mise de départ de 3 Ethers. Le gagnant de la manche reporte la mise. Cet atelier sera l'occasion de discuter des principes de design et de l'expérience utilisateur des applications décentralisées. Ce [guide](docs/tutorail.md) vous guidera étape par étape dans la création de votre premier jeu blockchain.
+
+### **19h05** : Comparaison des plateformes Ethereum Network, Loom Network et EOS
+
+L'année 2018 a vue apparaître deux nouvelles plateformes de dévellopement d'applications décentralisées: Loom Network en mars et EOS en juin. Nous allons comparer ces différentes plateformes sur le plans de la flexibilité de design et du consensus. Un [tableau compratif](docs/plateformes.md) des trois plateformes est disponible en référence.
+
+### **19h20** : Conférencier invité
+
 ### **19h30**: Conclusion
-Conclusion : Bilan, message + ouverture = hackathon 
+
+L'atelier se terminera par un mot de conclusion et une invitation au prochain évènement de P2PMTL. 
 
 ### **19h45**: Cocktail de réseautage
-Cocktail
+
+C'est l'occasion de discuster des sujets abordés lors de l'atelier et de réseauter entre collègues autour d'un verre de bière ou de vin.
 
 ### **21h00**: Fin
