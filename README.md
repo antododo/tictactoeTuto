@@ -1,8 +1,8 @@
-# Blockchain games event
+# Évènement Blockchain et jeux vidéos
 
 ## Résumé
 
-[P2PMTL](https://medium.com/) est fier de présenter son premier atelier portant la Blockchain et les jeux vidéo. Lors de cet atelier vous en apprendrez plus sur les liens étroits qui unissent le monde des jeux vidéo et celui de la blockchain. À travers une expérience pratique de dévellopement d'un jeu sur la plateform Ethereum, vous en apprendrez d'avantage sur les paramètres de design des applications décentralisées et la manière dont ils influencent l'expérience utilisateur. Pour terminer, nous comparerons la plateforme Ethereum a deux autre plateforme plus récentes qui promettent au dévellopeur une plus grande flexibilité de design afin d'améliorer UX.
+[P2PMTL](https://medium.com/) est fier de présenter son premier atelier portant la Blockchain et les jeux vidéo. Lors de cet atelier vous en apprendrez plus sur les liens étroits qui unissent le monde des jeux vidéo et celui de la blockchain. À travers une expérience pratique de dévellopement d'un jeu sur la plateform Ethereum, vous en apprendrez d'avantage sur les paramètres de design des applications décentralisées et la manière dont ils influencent l'expérience utilisateur. Pour terminer, nous comparerons la plateforme Ethereum à deux autres plateformes plus récentes qui promettent au dévellopeur une plus grande flexibilité au niveau du design.
 
 ## Programme de l'évènement
 
