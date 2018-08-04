@@ -1,4 +1,4 @@
-## 3. Comparing three Daap plateforms for game devellopement
+# Comparing three Daap plateforms for game devellopement
 
 Now that we have some experience with the developpement of a blockchain game, we will now compare three decentralized application devellopement plateforms in terms of the three issues raised before, namely, transaction fees, transaction rate and account security.
 
