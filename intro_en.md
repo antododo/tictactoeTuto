@@ -1,6 +1,4 @@
-# Blockchain and games event 
-
-## 1. Introductory talk
+# The Blockchain and games: a long term partership
 
 ### Emergence of The Virtual Economy
 
@@ -28,29 +26,4 @@ But technological constrains remain that hinders the devellopers from offering a
 3. Security: Can you really trust your users to keep their private key safe?
 
 Through the following tutorial, we will build our first blockchain game. It will be an opportunity to experiment with these three technological constrains, understand the interplay between them and apprehend their impact on the user experience. After the tutorial, we will investigate tools available to devellopers to improve user experience on blockchain games. We will compare three devellopment plateforms (Ethereum, EOS and Loom Network) in terms of consensus, a design parameter specific the devellopment of decentralized applications (Dapps) on the blockchain. 
-
-## 2. Tutorial: building a simple tic tac toe on the blockchain
-
-[...]
-
-## 3. Comparing three Daap plateforms for game devellopement
-
-Now that we have some experience with the developpement of a blockchain game, we will now compare three decentralized application devellopement plateforms in terms of the three issues raised before, namely, transaction fees, transaction rate and account security.
-
-|  | Platform            | Consensus algorythm      | Features |Transaction fees| Transaction rate | Decentralization | Security |
-|---|---------------------|---------------------------|---|-------|---|---|---|
-|1.| The Ethereum Network | Currently Proof-of-work (PoW) | Strong network effect | High | Low | High | Highest |
-|2.| The Loom Network    | Customizable Delegated Proof-of-State (DPoS) on Ethereum (PoW) sidechains | Plasma |Low | High | Low | Low |
-|3.| EOS | Delegated Proof-of-Stake with possibility of customizable sidechains | Account recovery options built-in | unknown for now | High | Low | High |
-
-
-blockchain technology might be the next big thing in that space. The gaming market is huge and e-sports popularity is growing.  
-
-## 3. Invited speaker
-
-## 4. Concluding talk
-
-> Games are not that naive: many design concepts of blockchain games are also relevant to other blockchain use-cases such as logistics or notaries
-
-> Introducing the blockchain game hack-a-thon: a design competition centered on concepts and ideas, not actual code. 
 
