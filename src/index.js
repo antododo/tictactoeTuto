@@ -66,8 +66,6 @@ class Game extends React.Component {
 
     //TUTO
     // Binding
-    this.SendWinner = this.SendWinner.bind(this);
-    this.BetOn = this.BetOn.bind(this);
     this.BuyIn = this.BuyIn.bind(this);
 
   }
@@ -78,9 +76,6 @@ class Game extends React.Component {
     // Get accounts
     console.log("Getting user accounts")
     web3.eth.getAccounts((error, accounts) => {
-      // Update state with the result.
-      this.setState({userAccount: accounts[0] })
-      console.log("user account is: "+ this.state.userAccount)
       this.setState({XuserAccount: accounts[0] })
       console.log("X user account is: "+ this.state.XuserAccount)
       this.setState({OuserAccount: accounts[1] })
@@ -92,92 +87,54 @@ class Game extends React.Component {
       .then((result)=>{
         console.log("X user balance is: " + result)
       })
+	  web3.eth.getBalance(this.state.OuserAccount)
+      .then((result)=>{
+        console.log("O user balance is: " + result)
+      })
     })
 
     // Get contract
-    var contractAddress = "0xcdd085d82c1e60829faaca5465be1701acf99703";
+    var contractAddress = "0xae41e58c43736629edee3d854cf3790aaf13fdc0";
     var contractABI = [
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_betWinner",
-            "type": "string"
-          }
-        ],
-        "name": "BetOn",
-        "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "BettingResult",
-        "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "BuyIn",
-        "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_newWinner",
-            "type": "string"
-          }
-        ],
-        "name": "SetWinner",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "constructor"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "GetBet",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "GetWinner",
-        "outputs": [
-          {
-            "name": "",
-            "type": "string"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      }
-    ]
+		{
+			"constant": false,
+			"inputs": [],
+			"name": "BuyIn",
+			"outputs": [],
+			"payable": true,
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "GetBet",
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [],
+			"name": "BettingResult",
+			"outputs": [],
+			"payable": true,
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"payable": true,
+			"stateMutability": "payable",
+			"type": "constructor"
+		}
+	]
 
     this.setState({
       contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
@@ -213,19 +170,11 @@ class Game extends React.Component {
     console.log("Winner is: " + _winner + ", SENDING WINNER")
     //Update new Winner
     if(_winner === 'X') {
-      this.state.contract.methods.SetWinner(_winner).send({from: this.state.XuserAccount})
       this.state.contract.methods.BettingResult().send({from: this.state.XuserAccount})
     }
     else{
-      this.state.contract.methods.SetWinner(_winner).send({from: this.state.OuserAccount})
       this.state.contract.methods.BettingResult().send({from: this.state.OuserAccount})
     }
-  }
-
-  //TUTO
-  BetOn(){
-    let bet = this.state.web3.utils.toWei('3', 'ether');
-    this.state.contract.methods.BetOn("X").send({from: this.state.userAccount, value: bet});
   }
 
   BuyIn(){
