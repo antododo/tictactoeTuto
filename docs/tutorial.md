@@ -9,15 +9,15 @@ Pour obtenir la version de base du jeu Tic Tac Toe
 
 ## 02 - Rajouter le contrat Solidity avec Remix
 
-###Écrire le code
+### 02.01 Écrire le code
 Aller sur http://remix.ethereum.org et écrire le code qui se trouve dans le fichier contract.sol
-###Lancer Ganache
+### 02.02 Lancer Ganache
 lancer simplement Ganache et vérifier que le RPC server est bien HTTP://127.0.0.1:7545
 
-###Connecter Remix à Ganache
+### 02.03 Connecter Remix à Ganache
 Dans l'onglet Run de Remix, choisir comme environnement : Web3 Provider et changer pour http://localhost:7545 qui correspond au port de Ganache
 
-### Déployer le contrat
+### 02.04 Déployer le contrat
 Dans Remix, Déployer le contrat en appuyant sur [Deploy].
 
 **IMPORTANT** ne pas fermer la page avec Remix
@@ -40,7 +40,7 @@ Ne pas oublier de rajouter "," à la fin de la ligne précédente
 
 ### 03.02 - Get accounts
 Ajouter à this.state 
-````
+```
 XuserAccount: null,
 XuserBalance: 0,
 OuserAccount: null,
@@ -48,6 +48,7 @@ OuserBalance: 0,
 ```
 
 Créer une fonction componentDidMount(){}, cette fonction est exécutée une fois que l'application est prête.
+
 ```
   componentDidMount(){
     // Get accounts
