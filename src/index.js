@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 // TUTO
 import Web3 from 'web3';
-//var web3 = new Web3(Web3.givenProvider || "http://localhost:8545"); //To use at deployement: Metamask and Ropsten
-var web3 = new Web3("http://localhost:8545"); //To during dev.: use with Ganache
+//var web3 = new Web3(Web3.givenProvider || "http://localhost:7545"); //To use at deployement: Metamask and Ropsten
+var web3 = new Web3("http://localhost:7545"); //To during dev.: use with Ganache
 
 function Square (props) {
   return (
