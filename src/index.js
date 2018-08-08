@@ -86,7 +86,7 @@ class Game extends React.Component {
       this.setState({XuserAccount: accounts[0] })
       console.log("X user account is: "+ this.state.XuserAccount)
       this.setState({OuserAccount: accounts[1] })
-      console.log("O user account is: "+ this.state.XuserAccount)
+      console.log("O user account is: "+ this.state.OuserAccount)
     })
     .then(()=>{
       // Getting X user balance
@@ -97,7 +97,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0xcdd085d82c1e60829faaca5465be1701acf99703";
+    var contractAddress = "0x3c9036fc5f3cbb75ceefee5a888fcf1a3d1f842e";
     var contractABI = [
       {
         "constant": false,

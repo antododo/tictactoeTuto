@@ -5,6 +5,7 @@ contract Winner {
     string betWinner = "no bet";
     uint256 betAmount= 0;
     int numberOfPlayers = 0;
+    mapping(address => bool) isPlayer;
     
     constructor() public payable{
     }
@@ -12,6 +13,9 @@ contract Winner {
     function BuyIn() public payable {
         betAmount = betAmount + msg.value;
         numberOfPlayers = numberOfPlayers + 1;
+        if(numberOfPlayers <= 2){
+            isPlayer[msg.sender] = true;
+        }
     }
     
     function BetOn(string _betWinner) public payable {
@@ -32,7 +36,11 @@ contract Winner {
     }
     
     function BettingResult() public payable {
-        msg.sender.transfer(betAmount);
-        betAmount = 0;
+        if(isPlayer[msg.sender] == true){
+            msg.sender.transfer(betAmount);
+            betAmount = 0;
+            numberOfPlayers = 0;
+        }
+
     }
 }
