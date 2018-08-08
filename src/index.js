@@ -57,10 +57,13 @@ class Game extends React.Component {
       stepNumber: 0,
       xIsNext: true,
       //TUTO
+      currentBet: 0,
       contract: null,
       userAccount: null,
       XuserAccount: null,
+      XuserBalance: 0,
       OuserAccount: null,
+      OuserBalance: 0,
       web3: web3
     };
 
@@ -74,27 +77,19 @@ class Game extends React.Component {
   componentDidMount(){
 
     // Get accounts
-    console.log("Getting user accounts")
+    console.log("Getting players accounts")
     web3.eth.getAccounts((error, accounts) => {
       this.setState({XuserAccount: accounts[0] })
-      console.log("X user account is: "+ this.state.XuserAccount)
+      console.log("Player X account is: "+ this.state.XuserAccount)
       this.setState({OuserAccount: accounts[1] })
-      console.log("O user account is: "+ this.state.XuserAccount)
+      console.log("Player O account is: "+ this.state.XuserAccount)
     })
     .then(()=>{
-      // Getting X user balance
-      web3.eth.getBalance(this.state.XuserAccount)
-      .then((result)=>{
-        console.log("X user balance is: " + result)
-      })
-	  web3.eth.getBalance(this.state.OuserAccount)
-      .then((result)=>{
-        console.log("O user balance is: " + result)
-      })
+      this.ShowBalances()
     })
 
     // Get contract
-    var contractAddress = "0xae41e58c43736629edee3d854cf3790aaf13fdc0";
+    var contractAddress = "0xf7e3e47e06f1bddecb1b2f3a7f60b6b25fd2e233";
     var contractABI = [
 		{
 			"constant": false,
@@ -166,21 +161,56 @@ class Game extends React.Component {
   }
 
   //TUTO
+  // Show X and O balances
+  ShowBalances(){
+    // Getting X user balance
+    web3.eth.getBalance(this.state.XuserAccount)
+    .then((result)=>{
+      this.setState({
+        XuserBalance: result/1000000000000000000
+      })
+    })
+    // Getting O user balance
+    web3.eth.getBalance(this.state.OuserAccount)
+    .then((result)=>{
+      this.setState({
+        OuserBalance: result/1000000000000000000
+      })
+    })
+    // Show current bet
+    this.state.contract.methods.GetBet().call()
+    .then((result)=>{
+      // 1 ETH = 1000000000000000000 WEI
+      this.setState({currentBet: result/1000000000000000000});
+    })
+}
+
+  //TUTO
   SendWinner(_winner){
     console.log("Winner is: " + _winner + ", SENDING WINNER")
     //Update new Winner
     if(_winner === 'X') {
       this.state.contract.methods.BettingResult().send({from: this.state.XuserAccount})
+      .then(()=>{
+        this.ShowBalances()
+      })
     }
     else{
       this.state.contract.methods.BettingResult().send({from: this.state.OuserAccount})
-    }
+      .then(()=>{
+        this.ShowBalances()
+      })
+    }    
   }
 
   BuyIn(){
     let bet = this.state.web3.utils.toWei('3', 'ether');
     this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet});
-    this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet});
+    this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
+    .then(()=>{
+      //Show users balances
+      this.ShowBalances();
+    })
   }
 
   render() {
@@ -201,7 +231,8 @@ class Game extends React.Component {
 
 
     let status;
-    if (winner) {
+    // Workaround to prevent loop with SendWinner: && this.state.currentBet !== 0
+    if (winner && this.state.currentBet !== 0) {
       //TUTO
       this.SendWinner(winner)
       status = 'Winner: ' + winner;
@@ -210,23 +241,34 @@ class Game extends React.Component {
     }
 
     return (
-      <div className="game">
+      <div>
         <div>
-          <button onClick={this.BuyIn}>Buy in (3ETH)</button>
+          <div>
+          {"Player X address: " + this.state.XuserAccount}
+          <br/>
+          {"Player X balance: " + this.state.XuserBalance + " ETH"}
+          <br/>
+          {"Player O address: " + this.state.OuserAccount}
+          <br/>
+          {"Player O balance: " + this.state.OuserBalance + " ETH"}
+          <br/>
+          <button onClick={this.BuyIn}>Both players buy in (3ETH)</button>
+          <br/>
+          {"Current bet: " + this.state.currentBet + " ETH"}</div>
+          <br/>
         </div>
+        <div className="game">
         <div className="game-board">
           <Board
           squares={current.squares}
           onClick={(i) => this.handleClick(i)}
           />
-
         </div>
         <div className="game-info">
-          <div>{"X: " + this.state.XuserAccount}</div>
-          <div>{"0: " + this.state.OuserAccount}</div>
           <div>{status}</div>
           <ol>{moves}</ol>
         </div>
+      </div>
       </div>
     );
   }
