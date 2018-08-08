@@ -62,6 +62,7 @@ class Game extends React.Component {
       userAccount: null,
       XuserAccount: null,
       OuserAccount: null,
+      isGameStarted: false,
       web3: web3
     };
 
@@ -212,6 +213,9 @@ class Game extends React.Component {
 
   //TUTO
   SendWinner(_winner){
+    if(this.state.isGameStarted === true){
+      this.setState({isGameStarted: false});
+    };
     console.log("Winner is: " + _winner + ", SENDING WINNER")
     //Update new Winner
     if(_winner === 'X') {
@@ -231,6 +235,7 @@ class Game extends React.Component {
   }
 
   BuyIn(){
+    this.setState({isGameStarted: true});
     let bet = this.state.web3.utils.toWei('3', 'ether');
     this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet});
     this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet});
@@ -293,13 +298,13 @@ class Game extends React.Component {
         <div className="game-info">
           <div>
             {"X: "}
-            <select id="XaddressSelect" value={selectedXaddress} onChange={this.handleXAddressChange} >
+            <select id="XaddressSelect" value={selectedXaddress} onChange={this.handleXAddressChange} disabled={this.state.isGameStarted}>
               {optionItems}
             </select>
           </div>
           <div>
             {"0: "}
-            <select id="OaddressSelect" value={selectedOaddress} onChange={this.handleOAddressChange}>
+            <select id="OaddressSelect" value={selectedOaddress} onChange={this.handleOAddressChange} disabled={this.state.isGameStarted}>
               {optionItems}
             </select>
           </div>
