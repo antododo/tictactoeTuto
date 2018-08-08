@@ -58,6 +58,7 @@ class Game extends React.Component {
       xIsNext: true,
       //TUTO
       contract: null,
+      allAccounts: [],
       userAccount: null,
       XuserAccount: null,
       OuserAccount: null,
@@ -79,6 +80,7 @@ class Game extends React.Component {
     console.log("Getting user accounts")
     web3.eth.getAccounts((error, accounts) => {
       // Update state with the result.
+      this.setState({allAccounts: accounts})
       this.setState({userAccount: accounts[0] })
       console.log("user account is: "+ this.state.userAccount)
       this.setState({XuserAccount: accounts[0] })
@@ -234,6 +236,14 @@ class Game extends React.Component {
     this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet});
   }
 
+  handleXAddressChange = (event) =>{
+      this.setState({XuserAccount: event.target.value});
+  }
+
+  handleOAddressChange = (event) =>{
+    this.setState({OuserAccount: event.target.value});
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -259,12 +269,20 @@ class Game extends React.Component {
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
+    
+    let optionItems = this.state.allAccounts.map((account) =>
+    <option key={account}>{account}</option>
+    );
+
+    let selectedXaddress = this.state.XuserAccount;
+    let selectedOaddress = this.state.OuserAccount;
 
     return (
       <div className="game">
         <div>
           <button onClick={this.BuyIn}>Buy in (3ETH)</button>
-        </div>
+        </div>      
+
         <div className="game-board">
           <Board
           squares={current.squares}
@@ -273,8 +291,18 @@ class Game extends React.Component {
 
         </div>
         <div className="game-info">
-          <div>{"X: " + this.state.XuserAccount}</div>
-          <div>{"0: " + this.state.OuserAccount}</div>
+          <div>
+            {"X: "}
+            <select id="XaddressSelect" value={selectedXaddress} onChange={this.handleXAddressChange} >
+              {optionItems}
+            </select>
+          </div>
+          <div>
+            {"0: "}
+            <select id="OaddressSelect" value={selectedOaddress} onChange={this.handleOAddressChange}>
+              {optionItems}
+            </select>
+          </div>
           <div>{status}</div>
           <ol>{moves}</ol>
         </div>
