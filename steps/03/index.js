@@ -1,10 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-// TUTO
+// **** 03.01 ****
 import Web3 from 'web3';
-//var web3 = new Web3(Web3.givenProvider || "http://localhost:7545"); //To use at deployement: Metamask and Ropsten
-var web3 = new Web3("http://localhost:7545"); //To during dev.: use with Ganache
+var web3 = new Web3("http://localhost:7545");
 
 function Square (props) {
   return (
@@ -56,25 +55,19 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
-      //TUTO
-      currentBet: 0,
-      contract: null,
+      // **** 03.01 ****
+      // don't forget the "," at the end of the previous line
+      web3: web3,
+      // **** 03.02 ****
       XuserAccount: null,
       XuserBalance: 0,
       OuserAccount: null,
       OuserBalance: 0,
-      web3: web3
     };
-
-    //TUTO
-    // Binding
-    this.BuyIn = this.BuyIn.bind(this);
-
   }
 
-  //TUTO
+  // **** 03.02 ****
   componentDidMount(){
-
     // Get accounts
     console.log("Getting players accounts")
     web3.eth.getAccounts((error, accounts) => {
@@ -86,54 +79,34 @@ class Game extends React.Component {
     .then(()=>{
       this.ShowBalances()
     })
-
-    // Get contract
-    var contractAddress = "0xf7e3e47e06f1bddecb1b2f3a7f60b6b25fd2e233";
-    var contractABI = [
-		{
-			"constant": false,
-			"inputs": [],
-			"name": "BuyIn",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [],
-			"name": "GetBet",
-			"outputs": [
-				{
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [],
-			"name": "BettingResult",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"inputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "constructor"
-		}
-	]
-
-    this.setState({
-      contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
-    })
   }
+
+  // **** 03.02 ****
+  // Show X and O balances
+  ShowBalances(){
+    // Getting X user balance
+    web3.eth.getBalance(this.state.XuserAccount)
+    .then((result)=>{
+      this.setState({
+        XuserBalance: result/1000000000000000000
+      })
+    })
+    // Getting O user balance
+    web3.eth.getBalance(this.state.OuserAccount)
+    .then((result)=>{
+      this.setState({
+        OuserBalance: result/1000000000000000000
+      })
+    })
+    // // **** 03.03 ****
+    // // Show current bet
+    // this.state.contract.methods.GetBet().call()
+    // .then((result)=>{
+    //   // 1 ETH = 1000000000000000000 WEI
+    //   this.setState({currentBet: result/1000000000000000000});
+    // })
+  }
+
 
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
@@ -159,59 +132,6 @@ class Game extends React.Component {
     });
   }
 
-  //TUTO
-  // Show X and O balances
-  ShowBalances(){
-    // Getting X user balance
-    web3.eth.getBalance(this.state.XuserAccount)
-    .then((result)=>{
-      this.setState({
-        XuserBalance: result/1000000000000000000
-      })
-    })
-    // Getting O user balance
-    web3.eth.getBalance(this.state.OuserAccount)
-    .then((result)=>{
-      this.setState({
-        OuserBalance: result/1000000000000000000
-      })
-    })
-    // Show current bet
-    this.state.contract.methods.GetBet().call()
-    .then((result)=>{
-      // 1 ETH = 1000000000000000000 WEI
-      this.setState({currentBet: result/1000000000000000000});
-    })
-}
-
-  //TUTO
-  SendWinner(_winner){
-    console.log("Winner is: " + _winner + ", SENDING WINNER")
-    //Update new Winner
-    if(_winner === 'X') {
-      this.state.contract.methods.BettingResult().send({from: this.state.XuserAccount})
-      .then(()=>{
-        this.ShowBalances()
-      })
-    }
-    else{
-      this.state.contract.methods.BettingResult().send({from: this.state.OuserAccount})
-      .then(()=>{
-        this.ShowBalances()
-      })
-    }    
-  }
-
-  BuyIn(){
-    let bet = this.state.web3.utils.toWei('3', 'ether');
-    this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet});
-    this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
-    .then(()=>{
-      //Show users balances
-      this.ShowBalances();
-    })
-  }
-
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -228,12 +148,8 @@ class Game extends React.Component {
       );
     });
 
-
     let status;
-    // Workaround to prevent loop with SendWinner: && this.state.currentBet !== 0
-    if (winner && this.state.currentBet !== 0) {
-      //TUTO
-      this.SendWinner(winner)
+    if (winner) {
       status = 'Winner: ' + winner;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
@@ -241,22 +157,6 @@ class Game extends React.Component {
 
     return (
       <div>
-        <div>
-          <div>
-            {"Player X address: " + this.state.XuserAccount}
-            <br/>
-            {"Player X balance: " + this.state.XuserBalance + " ETH"}
-            <br/>
-            {"Player O address: " + this.state.OuserAccount}
-            <br/>
-            {"Player O balance: " + this.state.OuserBalance + " ETH"}
-            <br/>
-            <button onClick={this.BuyIn}>Both players buy in (3ETH)</button>
-            <br/>
-            {"Current bet: " + this.state.currentBet + " ETH"}
-          </div>
-          <br/>
-        </div>
         <div className="game">
         <div className="game-board">
           <Board
