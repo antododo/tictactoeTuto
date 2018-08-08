@@ -59,11 +59,13 @@ class Game extends React.Component {
       //TUTO
       currentBet: 0,
       contract: null,
+      allAccounts: [],
       XuserAccount: null,
       XuserBalance: 0,
       OuserAccount: null,
       OuserBalance: 0,
-      web3: web3
+      isGameStarted: false,
+      web3: web3,
     };
 
     //TUTO
@@ -79,6 +81,7 @@ class Game extends React.Component {
     console.log("Getting players accounts")
     web3.eth.getAccounts((error, accounts) => {
       this.setState({
+        allAccounts: accounts,
         XuserAccount: accounts[0],
         OuserAccount: accounts[1] 
        })
@@ -88,7 +91,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0xf7e3e47e06f1bddecb1b2f3a7f60b6b25fd2e233";
+    var contractAddress = "0x3c9036fc5f3cbb75ceefee5a888fcf1a3d1f842e";
     var contractABI = [
 		{
 			"constant": false,
@@ -186,6 +189,9 @@ class Game extends React.Component {
 
   //TUTO
   SendWinner(_winner){
+    if(this.state.isGameStarted === true){
+      this.setState({isGameStarted: false});
+    };
     console.log("Winner is: " + _winner + ", SENDING WINNER")
     //Update new Winner
     if(_winner === 'X') {
@@ -203,6 +209,7 @@ class Game extends React.Component {
   }
 
   BuyIn(){
+    this.setState({isGameStarted: true});
     let bet = this.state.web3.utils.toWei('3', 'ether');
     this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet});
     this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
@@ -210,6 +217,14 @@ class Game extends React.Component {
       //Show users balances
       this.ShowBalances();
     })
+  }
+
+  handleXAddressChange = (event) =>{
+      this.setState({XuserAccount: event.target.value});
+  }
+
+  handleOAddressChange = (event) =>{
+    this.setState({OuserAccount: event.target.value});
   }
 
   render() {
@@ -238,6 +253,13 @@ class Game extends React.Component {
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
+    
+    let optionItems = this.state.allAccounts.map((account) =>
+    <option key={account}>{account}</option>
+    );
+
+    let selectedXaddress = this.state.XuserAccount;
+    let selectedOaddress = this.state.OuserAccount;
 
     return (
       <div>
@@ -265,6 +287,18 @@ class Game extends React.Component {
           />
         </div>
         <div className="game-info">
+          <div>
+            {"X: "}
+            <select id="XaddressSelect" value={selectedXaddress} onChange={this.handleXAddressChange} disabled={this.state.isGameStarted}>
+              {optionItems}
+            </select>
+          </div>
+          <div>
+            {"0: "}
+            <select id="OaddressSelect" value={selectedOaddress} onChange={this.handleOAddressChange} disabled={this.state.isGameStarted}>
+              {optionItems}
+            </select>
+          </div>
           <div>{status}</div>
           <ol>{moves}</ol>
         </div>
