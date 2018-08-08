@@ -79,10 +79,10 @@ class Game extends React.Component {
     // Get accounts
     console.log("Getting players accounts")
     web3.eth.getAccounts((error, accounts) => {
-      this.setState({XuserAccount: accounts[0] })
-      console.log("Player X account is: "+ this.state.XuserAccount)
-      this.setState({OuserAccount: accounts[1] })
-      console.log("Player O account is: "+ this.state.XuserAccount)
+      this.setState({
+        XuserAccount: accounts[0],
+        OuserAccount: accounts[1] 
+       })
     })
     .then(()=>{
       this.ShowBalances()
