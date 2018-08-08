@@ -91,7 +91,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0x3c9036fc5f3cbb75ceefee5a888fcf1a3d1f842e";
+    var contractAddress = "0xf12b5dd4ead5f743c6baa640b0216200e89b60da";
     var contractABI = [
 		{
 			"constant": false,
@@ -220,11 +220,12 @@ class Game extends React.Component {
   }
 
   handleXAddressChange = (event) =>{
-      this.setState({XuserAccount: event.target.value});
+      this.setState({XuserAccount: event.target.value}, this.ShowBalances);
+
   }
 
   handleOAddressChange = (event) =>{
-    this.setState({OuserAccount: event.target.value});
+    this.setState({OuserAccount: event.target.value}, this.ShowBalances);
   }
 
   render() {
@@ -265,11 +266,17 @@ class Game extends React.Component {
       <div>
         <div>
           <div>
-            {"Player X address: " + this.state.XuserAccount}
+            Player X address:
+            <select id="XaddressSelect" value={selectedXaddress || ''} onChange={this.handleXAddressChange} disabled={this.state.isGameStarted}>
+              {optionItems}
+            </select>
             <br/>
             {"Player X balance: " + this.state.XuserBalance + " ETH"}
             <br/>
-            {"Player O address: " + this.state.OuserAccount}
+            Player O address:
+            <select id="OaddressSelect" value={selectedOaddress || ''} onChange={this.handleOAddressChange} disabled={this.state.isGameStarted}>
+              {optionItems}
+            </select>
             <br/>
             {"Player O balance: " + this.state.OuserBalance + " ETH"}
             <br/>
@@ -287,18 +294,6 @@ class Game extends React.Component {
           />
         </div>
         <div className="game-info">
-          <div>
-            {"X: "}
-            <select id="XaddressSelect" value={selectedXaddress} onChange={this.handleXAddressChange} disabled={this.state.isGameStarted}>
-              {optionItems}
-            </select>
-          </div>
-          <div>
-            {"0: "}
-            <select id="OaddressSelect" value={selectedOaddress} onChange={this.handleOAddressChange} disabled={this.state.isGameStarted}>
-              {optionItems}
-            </select>
-          </div>
           <div>{status}</div>
           <ol>{moves}</ol>
         </div>
