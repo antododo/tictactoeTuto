@@ -11,10 +11,10 @@ contract Winner {
     }
     
     function BuyIn() public payable {
-        betAmount = betAmount + msg.value;
-        numberOfPlayers = numberOfPlayers + 1;
-        if(numberOfPlayers <= 2){
+        if(numberOfPlayers < 2){
             isPlayer[msg.sender] = true;
+            betAmount = betAmount + msg.value;
+            numberOfPlayers = numberOfPlayers + 1;
         }
     }
 

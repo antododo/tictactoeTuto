@@ -4,7 +4,7 @@ import './index.css';
 // TUTO
 import Web3 from 'web3';
 //var web3 = new Web3(Web3.givenProvider || "http://localhost:7545"); //To use at deployement: Metamask and Ropsten
-var web3 = new Web3("http://localhost:7545"); //To during dev.: use with Ganache
+var web3 = new Web3("http://localhost:8545"); //To during dev.: use with Ganache
 
 function Square (props) {
   return (
@@ -91,7 +91,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0x3c9036fc5f3cbb75ceefee5a888fcf1a3d1f842e";
+    var contractAddress = "0xc6f05f5418a3e0fec2e63509c208b608f032b6a4";
     var contractABI = [
 		{
 			"constant": false,
@@ -220,11 +220,13 @@ class Game extends React.Component {
   }
 
   handleXAddressChange = (event) =>{
-      this.setState({XuserAccount: event.target.value});
+    this.setState({XuserAccount: event.target.value})
+    this.ShowBalances();
   }
 
   handleOAddressChange = (event) =>{
-    this.setState({OuserAccount: event.target.value});
+    this.setState({OuserAccount: event.target.value})
+    this.ShowBalances();
   }
 
   render() {
