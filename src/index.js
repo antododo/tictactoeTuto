@@ -269,11 +269,17 @@ class Game extends React.Component {
       <div>
         <div>
           <div>
-            {"Player X address: " + this.state.XuserAccount}
+            Player X address:
+            <select id="XaddressSelect" value={selectedXaddress || ''} onChange={this.handleXAddressChange} disabled={this.state.isGameStarted}>
+              {optionItems}
+            </select>
             <br/>
             {"Player X balance: " + this.state.XuserBalance + " ETH"}
             <br/>
-            {"Player O address: " + this.state.OuserAccount}
+            Player O address:
+            <select id="OaddressSelect" value={selectedOaddress || ''} onChange={this.handleOAddressChange} disabled={this.state.isGameStarted}>
+              {optionItems}
+            </select>
             <br/>
             {"Player O balance: " + this.state.OuserBalance + " ETH"}
             <br/>
@@ -291,18 +297,6 @@ class Game extends React.Component {
           />
         </div>
         <div className="game-info">
-          <div>
-            {"X: "}
-            <select id="XaddressSelect" value={selectedXaddress} onChange={this.handleXAddressChange} disabled={this.state.isGameStarted}>
-              {optionItems}
-            </select>
-          </div>
-          <div>
-            {"0: "}
-            <select id="OaddressSelect" value={selectedOaddress} onChange={this.handleOAddressChange} disabled={this.state.isGameStarted}>
-              {optionItems}
-            </select>
-          </div>
           <div>{status}</div>
           <ol>{moves}</ol>
         </div>
