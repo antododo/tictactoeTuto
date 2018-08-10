@@ -220,13 +220,15 @@ class Game extends React.Component {
   }
 
   handleXAddressChange = (event) =>{
-    this.setState({XuserAccount: event.target.value})
-    this.ShowBalances();
+    this.setState({XuserAccount: event.target.value}, () => {
+      this.ShowBalances();
+  });
   }
 
   handleOAddressChange = (event) =>{
-    this.setState({OuserAccount: event.target.value})
+    this.setState({OuserAccount: event.target.value}, () => {
     this.ShowBalances();
+  });
   }
 
   render() {
