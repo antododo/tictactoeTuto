@@ -6,6 +6,7 @@ contract Winner {
     uint256 betAmount= 0;
     int numberOfPlayers = 0;
     mapping(address => bool) isPlayer;
+    string boardState= "---------";
     
     constructor() public payable{
     }
@@ -19,7 +20,11 @@ contract Winner {
         }
     }
     
-    function BuyIn() public payable cost(3000000000000000000) {
+    function SetBoardState(string _boardState) public {
+        boardState = _boardState;
+    }
+
+    function BuyIn() public payable cost(3 ether) {
         if(numberOfPlayers < 2){
             isPlayer[msg.sender] = true;
             betAmount = betAmount + msg.value;
