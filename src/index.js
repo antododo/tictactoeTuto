@@ -76,10 +76,11 @@ class Game extends React.Component {
   }
 
   //TUTO
+
   componentDidMount(){
 
     // Get contract
-    var contractAddress = "0xc6f05f5418a3e0fec2e63509c208b608f032b6a4";
+    var contractAddress = "0xfefacfa48d4cc079d311cd47c082b2eea83d870d";
     var contractABI = [
       {
         "constant": false,
@@ -89,6 +90,12 @@ class Game extends React.Component {
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
+      },
+      {
+        "anonymous": false,
+        "inputs": [],
+        "name": "BoardChange",
+        "type": "event"
       },
       {
         "constant": false,
@@ -148,6 +155,7 @@ class Game extends React.Component {
         "type": "function"
       }
     ]
+    
     // Get accounts
     console.log("Getting players accounts")
     web3.eth.getAccounts((error, accounts) => {
@@ -157,13 +165,15 @@ class Game extends React.Component {
         OuserAccount: accounts[0] 
        })
     })
-    .then(() =>  this.setState({
-      contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
-    }, () => {this.SendBoardState();}))
     .then(()=>{
       this.ShowBalances()
     })
+    .then(() =>  this.setState({
+      contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
+    }, () => {this.SendBoardState();}))
+    .then(() => {this.state.contract.events.BoardChange({ filter: {}}, this.GetBoardState())})
   };    
+
 
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
@@ -207,16 +217,11 @@ class Game extends React.Component {
         OuserBalance: result/1000000000000000000
       })
     })
-    // Show current bet
-    this.state.contract.methods.GetBet().call()
-    .then((result)=>{
-      // 1 ETH = 1000000000000000000 WEI
-      this.setState({currentBet: result/1000000000000000000});
-    })
 }
 
   //TUTO
   SendBoardState(){
+    console.log("I'm in SendBoardState")
     let boardState = this.state.history[this.state.history.length - 1].squares;
     let boardStateStr = "";
     for(var i = 0; i < boardState.length; i++ ){
@@ -230,19 +235,14 @@ class Game extends React.Component {
     };
     if(this.state.xIsNext) {
       this.state.contract.methods.SetBoardState(boardStateStr).send({from: this.state.XuserAccount})
-      .then(()=>{
-        this.ShowBalances()
-      })
     }
     else{
       this.state.contract.methods.SetBoardState(boardStateStr).send( {from: this.state.OuserAccount})
-      .then(()=>{
-        this.ShowBalances()
-      })
     }
   };
 
   GetBoardState(){
+    console.log("I<m in GetBoardState.")
     this.state.contract.methods.GetBoardState().call()
     .then((result)=>{
       // 1 ETH = 1000000000000000000 WEI
@@ -267,7 +267,13 @@ class Game extends React.Component {
       .then(()=>{
         this.ShowBalances()
       })
-    }    
+    }
+    // Show current bet
+    this.state.contract.methods.GetBet().call()
+    .then((result)=>{
+      // 1 ETH = 1000000000000000000 WEI
+      this.setState({currentBet: result/1000000000000000000});
+    }) 
   }
 
   BuyIn(){
@@ -278,6 +284,14 @@ class Game extends React.Component {
     .then(()=>{
       //Show users balances
       this.ShowBalances();
+    })
+    .then(() => {
+      // Show current bet
+      this.state.contract.methods.GetBet().call()
+      .then((result)=>{
+        // 1 ETH = 1000000000000000000 WEI
+        this.setState({currentBet: result/1000000000000000000});
+      })
     })
   }
 
@@ -310,8 +324,6 @@ class Game extends React.Component {
     });
 
     console.log(this.state.history[history.length - 1].squares)
-
-    
 
     let status;
     // Workaround to prevent loop with SendWinner: && this.state.currentBet !== 0
