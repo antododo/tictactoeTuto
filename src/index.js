@@ -80,7 +80,7 @@ class Game extends React.Component {
   componentDidMount(){
 
     // Get contract
-    var contractAddress = "0xfefacfa48d4cc079d311cd47c082b2eea83d870d";
+    var contractAddress = "0xfa8568de5c41ffeddd09d5fd46a8a3bb3b6e0277";
     var contractABI = [
       {
         "constant": false,
@@ -93,7 +93,13 @@ class Game extends React.Component {
       },
       {
         "anonymous": false,
-        "inputs": [],
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "_by",
+            "type": "address"
+          }
+        ],
         "name": "BoardChange",
         "type": "event"
       },
@@ -162,16 +168,16 @@ class Game extends React.Component {
       this.setState({
         allAccounts: accounts,
         XuserAccount: accounts[0],
-        OuserAccount: accounts[0] 
+        OuserAccount: accounts[1] 
        })
     })
     .then(()=>{
       this.ShowBalances()
     })
+    
     .then(() =>  this.setState({
       contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
-    }, () => {this.SendBoardState();}))
-    .then(() => {this.state.contract.events.BoardChange({ filter: {}}, this.GetBoardState())})
+    }))
   };    
 
 
@@ -183,14 +189,17 @@ class Game extends React.Component {
       return;
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.SendBoardState(squares);
+    /*
     this.setState({
       history: history.concat([{
         squares: squares
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
-    }
-    , () => this.SendBoardState())
+    })*/
+
+    
     
   }
 
@@ -221,9 +230,8 @@ class Game extends React.Component {
 }
 
   //TUTO
-  SendBoardState(){
+  SendBoardState(boardState){
     console.log("I'm in SendBoardState")
-    let boardState = this.state.history[this.state.history.length - 1].squares;
     let boardStateStr = "";
     for(var i = 0; i < boardState.length; i++ ){
       if(isNull(boardState[i])){
@@ -236,21 +244,39 @@ class Game extends React.Component {
     };
     if(this.state.xIsNext) {
       this.state.contract.methods.SetBoardState(boardStateStr).send({from: this.state.XuserAccount})
-      .then(() => {this.state.contract.events.BoardChange({ filter: {}}, this.GetBoardState())})
+      .then(() => {this.state.contract.events.BoardChange({ filter: {_by: this.state.OuserAccount}}, this.GetBoardState())})
     }
     else{
       this.state.contract.methods.SetBoardState(boardStateStr).send( {from: this.state.OuserAccount})
-      .then(() => {this.state.contract.events.BoardChange({ filter: {}}, this.GetBoardState())})
+      .then(() => {this.state.contract.events.BoardChange({ filter: {_by: this.state.XuserAccount}}, this.GetBoardState())})
     }
   };
 
   GetBoardState(){
+    
     console.log("I<m in GetBoardState.")
+    const history = this.state.history;
+    let newSquares = Array(9).fill(null);
     this.state.contract.methods.GetBoardState().call()
     .then((result)=>{
       // 1 ETH = 1000000000000000000 WEI
       console.log("Contract board state:" + result);
+      //Parse the result into an array
+      for(let i = 0; i < result.length; i++){
+        if(result[i] !== "-"){
+          newSquares[i] = result[i];
+        }
+      }
+      console.log("Newsquares is: " + newSquares);
     })
+    //Write the received board state to the history
+    .then(() =>{    this.setState({
+      history: history.concat([{
+        squares: newSquares
+      }]),
+      stepNumber: history.length,
+      xIsNext: !this.state.xIsNext,
+    })})
   }
 
   SendWinner(_winner){
@@ -313,6 +339,7 @@ class Game extends React.Component {
 
   render() {
     const history = this.state.history;
+    console.log("step number is:" + this.state.stepNumber)
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
     const moves = history.map((step, move) => {
@@ -326,7 +353,7 @@ class Game extends React.Component {
       );
     });
 
-    console.log(this.state.history[history.length - 1].squares)
+    console.log(current.squares)
 
     let status;
     // Workaround to prevent loop with SendWinner: && this.state.currentBet !== 0
