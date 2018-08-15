@@ -191,6 +191,7 @@ class Game extends React.Component {
       xIsNext: !this.state.xIsNext,
     }
     , () => this.SendBoardState())
+    
   }
 
   jumpTo(step){
@@ -235,9 +236,11 @@ class Game extends React.Component {
     };
     if(this.state.xIsNext) {
       this.state.contract.methods.SetBoardState(boardStateStr).send({from: this.state.XuserAccount})
+      .then(() => {this.state.contract.events.BoardChange({ filter: {}}, this.GetBoardState())})
     }
     else{
       this.state.contract.methods.SetBoardState(boardStateStr).send( {from: this.state.OuserAccount})
+      .then(() => {this.state.contract.events.BoardChange({ filter: {}}, this.GetBoardState())})
     }
   };
 
