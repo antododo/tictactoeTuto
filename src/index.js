@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-//import * as util from 'util'
 // TUTO
 import Web3 from 'web3';
 import { isNull } from 'util';
@@ -82,7 +81,7 @@ class Game extends React.Component {
   //TUTO
   initState(){
     // Get contract
-    var contractAddress = "0xfa8568de5c41ffeddd09d5fd46a8a3bb3b6e0277";
+    var contractAddress = "0xc6f05f5418a3e0fec2e63509c208b608f032b6a4";
     var contractABI = [
       {
         "constant": false,
@@ -179,35 +178,12 @@ class Game extends React.Component {
     .then(() =>  this.setState({
       contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
     }))
+    .then(() => this.GetBoardState())
   };
 
-loadHistoryFromStorage(){
-  let recoveredHistory = JSON.parse(localStorage.getItem("history"));
-  console.log(recoveredHistory)
-  console.log(this.state.history) 
-  this.setState({
-    history: recoveredHistory,
-    stepNumber: recoveredHistory.length - 1,
-    xIsNext: (recoveredHistory.length % 2) === 0
-  })
-  console.log(this.state.history) 
-}
-
-componentDidMount(){
-  this.initState();
-  if(!isNull(localStorage.getItem("history"))){
-    this.loadHistoryFromStorage();
+  componentDidMount(){
+    this.initState()
   }
-  else{
-    this.updateLocalStore();
-  }
-}
-
-updateLocalStore(){
-  let history = this.state.history;
-  //let historystr = util.inspect(history);
-  localStorage.setItem("history", JSON.stringify(history));
-}
 
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
@@ -217,15 +193,7 @@ updateLocalStore(){
       return;
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.SendBoardState(squares)
-    /*
-    this.setState({
-      history: history.concat([{
-        squares: squares
-      }]),
-      stepNumber: history.length,
-      xIsNext: !this.state.xIsNext,
-    })*/  
+    this.SendBoardState(squares) 
   }
 
   jumpTo(step){
@@ -302,10 +270,6 @@ updateLocalStore(){
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
     })})
-    .then(() => {
-      this.updateLocalStore();
-    })
-    .then(() => {console.log(this.state.history)})
   }
 
   SendWinner(_winner){
