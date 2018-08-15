@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+//import * as util from 'util'
 // TUTO
 import Web3 from 'web3';
 import { isNull } from 'util';
@@ -16,6 +17,9 @@ function Square (props) {
 }
 
 class Board extends React.Component {
+
+
+
   renderSquare (i) {
     return (
       <Square
@@ -76,9 +80,7 @@ class Game extends React.Component {
   }
 
   //TUTO
-
-  componentDidMount(){
-
+  initState(){
     // Get contract
     var contractAddress = "0xfa8568de5c41ffeddd09d5fd46a8a3bb3b6e0277";
     var contractABI = [
@@ -169,17 +171,43 @@ class Game extends React.Component {
         allAccounts: accounts,
         XuserAccount: accounts[0],
         OuserAccount: accounts[1] 
-       })
+      })
     })
     .then(()=>{
       this.ShowBalances()
     })
-    
     .then(() =>  this.setState({
       contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
     }))
-  };    
+  };
 
+loadHistoryFromStorage(){
+  let recoveredHistory = JSON.parse(localStorage.getItem("history"));
+  console.log(recoveredHistory)
+  console.log(this.state.history) 
+  this.setState({
+    history: recoveredHistory,
+    stepNumber: recoveredHistory.length - 1,
+    xIsNext: (recoveredHistory.length % 2) === 0
+  })
+  console.log(this.state.history) 
+}
+
+componentDidMount(){
+  this.initState();
+  if(!isNull(localStorage.getItem("history"))){
+    this.loadHistoryFromStorage();
+  }
+  else{
+    this.updateLocalStore();
+  }
+}
+
+updateLocalStore(){
+  let history = this.state.history;
+  //let historystr = util.inspect(history);
+  localStorage.setItem("history", JSON.stringify(history));
+}
 
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
@@ -189,7 +217,7 @@ class Game extends React.Component {
       return;
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.SendBoardState(squares);
+    this.SendBoardState(squares)
     /*
     this.setState({
       history: history.concat([{
@@ -197,10 +225,7 @@ class Game extends React.Component {
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
-    })*/
-
-    
-    
+    })*/  
   }
 
   jumpTo(step){
@@ -277,6 +302,10 @@ class Game extends React.Component {
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
     })})
+    .then(() => {
+      this.updateLocalStore();
+    })
+    .then(() => {console.log(this.state.history)})
   }
 
   SendWinner(_winner){
