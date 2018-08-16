@@ -179,28 +179,11 @@ class Game extends React.Component {
       contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
     }))
     .then(() => this.GetBoardState())
+    .then(() => this.GetBet())
   };
 
   componentDidMount(){
     this.initState()
-  }
-
-  handleClick(i) {
-    const history = this.state.history.slice(0, this.state.stepNumber + 1);
-    const current = history[history.length - 1];
-    const squares = current.squares.slice();
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.SendBoardState(squares) 
-  }
-
-  jumpTo(step){
-    this.setState({
-      stepNumber: step,
-      xIsNext: (step % 2) === 0,
-    });
   }
 
   //TUTO
@@ -222,6 +205,27 @@ class Game extends React.Component {
     })
 }
 
+  handleClick(i) {
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    const current = history[history.length - 1];
+    const squares = current.squares.slice();
+    if (calculateWinner(squares) || squares[i]) {
+      return;
+    }
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.SendBoardState(squares) 
+    this.setState({ xIsNext: !this.state.xIsNext})    
+  }
+
+  jumpTo(step){
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
+    });
+  }
+
+
+
   //TUTO
   SendBoardState(boardState){
     console.log("I'm in SendBoardState")
@@ -237,30 +241,25 @@ class Game extends React.Component {
     };
     if(this.state.xIsNext) {
       this.state.contract.methods.SetBoardState(boardStateStr).send({from: this.state.XuserAccount})
-      .then(() => {this.state.contract.events.BoardChange({ filter: {_by: this.state.OuserAccount}}, this.GetBoardState())})
+      .then(() => {this.state.contract.events.BoardChange({ filter: {_by: this.state.OuserAccount}}, () => this.GetBoardState())})
     }
     else{
       this.state.contract.methods.SetBoardState(boardStateStr).send( {from: this.state.OuserAccount})
-      .then(() => {this.state.contract.events.BoardChange({ filter: {_by: this.state.XuserAccount}}, this.GetBoardState())})
+      .then(() => {this.state.contract.events.BoardChange({ filter: {_by: this.state.XuserAccount}}, () => this.GetBoardState())})
     }
   };
 
-  GetBoardState(){
-    
-    console.log("I<m in GetBoardState.")
+  GetBoardState(){  
     const history = this.state.history;
     let newSquares = Array(9).fill(null);
     this.state.contract.methods.GetBoardState().call()
     .then((result)=>{
-      // 1 ETH = 1000000000000000000 WEI
-      console.log("Contract board state:" + result);
       //Parse the result into an array
       for(let i = 0; i < result.length; i++){
         if(result[i] !== "-"){
           newSquares[i] = result[i];
         }
       }
-      console.log("Newsquares is: " + newSquares);
     })
     //Write the received board state to the history
     .then(() =>{    this.setState({
@@ -268,8 +267,8 @@ class Game extends React.Component {
         squares: newSquares
       }]),
       stepNumber: history.length,
-      xIsNext: !this.state.xIsNext,
     })})
+    .then(() => this.forceUpdate())
   }
 
   SendWinner(_winner){
@@ -299,7 +298,7 @@ class Game extends React.Component {
   }
 
   BuyIn(){
-    this.setState({isGameStarted: true});
+    this.setState({isGameStarted: true, xIsNext: true});
     let bet = this.state.web3.utils.toWei('3', 'ether');
     this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet});
     this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
@@ -308,15 +307,19 @@ class Game extends React.Component {
       this.ShowBalances();
     })
     .then(() => {
-      // Show current bet
-      this.state.contract.methods.GetBet().call()
-      .then((result)=>{
-        // 1 ETH = 1000000000000000000 WEI
-        this.setState({currentBet: result/1000000000000000000});
-      })
+      this.GetBet();
     })
+    .then(() => this.SendBoardState(Array(9).fill(null)))
   }
 
+  GetBet(){
+    // Show current bet
+    this.state.contract.methods.GetBet().call()
+    .then((result)=>{
+      // 1 ETH = 1000000000000000000 WEI
+      this.setState({currentBet: result/1000000000000000000});
+    })
+  }
 
   handleXAddressChange = (event) =>{
     this.setState({XuserAccount: event.target.value}, () => {
