@@ -6,10 +6,14 @@ contract Winner {
     uint256 betAmount= 0;
     int numberOfPlayers = 0;
     mapping(address => bool) isPlayer;
-    string boardState= "---------";
+    string boardState = "---------";
     
     constructor() public payable{
     }
+    
+    event BoardChange(
+        address indexed _by
+    );
     
     modifier cost(uint value){
         if(msg.value == value){
@@ -22,9 +26,15 @@ contract Winner {
     
     function SetBoardState(string _boardState) public {
         boardState = _boardState;
+        emit BoardChange(msg.sender);
     }
+    
+    function GetBoardState() public view returns(string){
+        return boardState;
+    }
+    
 
-    function BuyIn() public payable cost(3 ether) {
+    function BuyIn(bool _isX) public payable cost(3 ether) {
         if(numberOfPlayers < 2){
             isPlayer[msg.sender] = true;
             betAmount = betAmount + msg.value;
