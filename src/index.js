@@ -203,6 +203,7 @@ class Game extends React.Component {
         OuserBalance: result/1000000000000000000
       })
     })
+    .then(() => {this.state.contract.events.BoardChange({ filter: {_by: this.state.OuserAccount}}, () => this.GetBoardState())})
 }
 
   handleClick(i) {
@@ -213,8 +214,7 @@ class Game extends React.Component {
       return;
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.SendBoardState(squares) 
-    this.setState({ xIsNext: !this.state.xIsNext})    
+    this.SendBoardState(squares)
   }
 
   jumpTo(step){
@@ -241,23 +241,25 @@ class Game extends React.Component {
     };
     if(this.state.xIsNext) {
       this.state.contract.methods.SetBoardState(boardStateStr).send({from: this.state.XuserAccount})
-      .then(() => {this.state.contract.events.BoardChange({ filter: {_by: this.state.OuserAccount}}, () => this.GetBoardState())})
+      .then(() => this.GetBoardState())
     }
     else{
       this.state.contract.methods.SetBoardState(boardStateStr).send( {from: this.state.OuserAccount})
-      .then(() => {this.state.contract.events.BoardChange({ filter: {_by: this.state.XuserAccount}}, () => this.GetBoardState())})
+      .then(() => this.GetBoardState())
     }
   };
 
   GetBoardState(){  
     const history = this.state.history;
     let newSquares = Array(9).fill(null);
+    let cntr = 0;
     this.state.contract.methods.GetBoardState().call()
     .then((result)=>{
       //Parse the result into an array
       for(let i = 0; i < result.length; i++){
         if(result[i] !== "-"){
           newSquares[i] = result[i];
+          cntr += 1;
         }
       }
     })
@@ -267,9 +269,9 @@ class Game extends React.Component {
         squares: newSquares
       }]),
       stepNumber: history.length,
+      xIsNext: (cntr % 2)
     })})
-    .then(() => this.forceUpdate())
-  }
+    }
 
   SendWinner(_winner){
     if(this.state.isGameStarted === true){
