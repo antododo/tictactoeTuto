@@ -81,7 +81,7 @@ class Game extends React.Component {
   //TUTO
   initState(){
     // Get contract
-    var contractAddress = "0x4a108d4765a71dc33cbeb87592d7eda27328cdce";
+    var contractAddress = "0xc6f05f5418a3e0fec2e63509c208b608f032b6a4";
     var contractABI = [
       {
         "constant": false,
@@ -287,12 +287,13 @@ class Game extends React.Component {
   }
 
   BuyIn(){
-    this.setState({isGameStarted: true});
     let bet = this.state.web3.utils.toWei('3', 'ether');
+    this.setState({isGameStarted: true});
     this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet})
     this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
     .then(() => this.ShowBalances())
     .then(() => this.GetBet())
+    .then(() => this.jumpTo(0))
     .then(() => this.SendBoardState(Array(9).fill(null)))
   }
 
