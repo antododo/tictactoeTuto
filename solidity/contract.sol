@@ -47,6 +47,14 @@ contract Winner {
         return address(this).balance;
     }
     
+    function RecoverBet() public{
+        if(isPlayer[msg.sender] == true){
+            isPlayer[msg.sender] = false;
+            msg.sender.transfer(3 ether);
+            numberOfPlayers -= 1;
+        }
+    } 
+    
     function BettingResult() public {
         if(isPlayer[msg.sender] == true){
             msg.sender.transfer(address(this).balance);
