@@ -4,8 +4,8 @@ import './index.css';
 // TUTO
 import Web3 from 'web3';
 import { isNull } from 'util';
-//var web3 = new Web3(Web3.givenProvider); //To use at deployement: Metamask and Ropsten
-var web3 = new Web3("http://localhost:8545"); //To during dev.: use with Ganache
+var web3 = new Web3(Web3.givenProvider); //To use at deployement: Metamask and Ropsten
+//var web3 = new Web3("http://localhost:8545"); //To during dev.: use with Ganache
 
 function Square (props) {
   return (
@@ -55,9 +55,7 @@ class Game extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      history: [{
-        squares: Array(9).fill(null),
-      }],
+      history: [{squares: Array(9).fill(null)}],
       stepNumber: 0,
       xIsNext: true,
       //TUTO
@@ -81,7 +79,7 @@ class Game extends React.Component {
   //TUTO
   initState(){
     // Get contract
-    var contractAddress = "0x05b5a846f963d38e96e05e3b323f624c28d66721";
+    var contractAddress = "0xc65bb48017a3926c3a6b4e25766ab5bca8047751";
     var contractABI = [
       {
         "constant": false,
@@ -169,13 +167,14 @@ class Game extends React.Component {
       this.setState({
         allAccounts: accounts,
         XuserAccount: accounts[0],
-        OuserAccount: accounts[1] 
+        OuserAccount: accounts[0] 
       })
     })
     .then(() => this.ShowBalances())
     .then(() => this.setState({contract: new this.state.web3.eth.Contract(contractABI, contractAddress)}))
     .then(() => this.GetBoardState())
     .then(() => this.GetBet())
+    .then(() => this.setState({isGameStarted: (this.state.currentBet === 6)}))
   };
 
   componentDidMount(){
@@ -201,7 +200,7 @@ class Game extends React.Component {
       return;
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.SendBoardState(squares)
+    this.SendBoardState(squares);
   }
 
   jumpTo(step){
@@ -284,14 +283,13 @@ class Game extends React.Component {
       .then(() => this.ShowBalances())
       .then(() => this.GetBet())
       .then(() => this.ResetHistory())
-      //.then(() => this.jumpTo(0))
       .then(() => this.setState({isGameStarted: true}))
     }
   }
 
   ResetHistory(){
     let resettedHistory = [];
-    resettedHistory = resettedHistory.concat([{squares: Array(9).fill(null),}]);
+    resettedHistory = resettedHistory.concat([{squares: Array(9).fill(null)}]);
     this.setState({history: resettedHistory, stepNumber: 0}, () => this.SendBoardState(Array(9).fill(null)))
   }
 
