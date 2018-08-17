@@ -283,9 +283,16 @@ class Game extends React.Component {
       .then(() => this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet}))
       .then(() => this.ShowBalances())
       .then(() => this.GetBet())
-      .then(() => this.jumpTo(0))
+      .then(() => this.ResetHistory())
+      //.then(() => this.jumpTo(0))
       .then(() => this.setState({isGameStarted: true}))
     }
+  }
+
+  ResetHistory(){
+    let resettedHistory = [];
+    resettedHistory = resettedHistory.concat([{squares: Array(9).fill(null),}]);
+    this.setState({history: resettedHistory, stepNumber: 0}, () => this.SendBoardState(Array(9).fill(null)))
   }
 
   GetBet(){
