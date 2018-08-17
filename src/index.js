@@ -4,8 +4,8 @@ import './index.css';
 // TUTO
 import Web3 from 'web3';
 import { isNull } from 'util';
-//var web3 = new Web3(Web3.givenProvider); //To use at deployement: Metamask and Ropsten
-var web3 = new Web3("http://localhost:8545"); //To during dev.: use with Ganache
+var web3 = new Web3(Web3.givenProvider); //To use at deployement: Metamask and Ropsten
+//var web3 = new Web3("http://localhost:8545"); //To during dev.: use with Ganache
 
 function Square (props) {
   return (
@@ -78,7 +78,7 @@ class Game extends React.Component {
   //TUTO
   initState(){
     // Get contract
-    var contractAddress = "0x99f1951411c56d373b1d5658a446533fcea2db0e";
+    var contractAddress = "0x8a1d7f6877df46bb4b5dd11a4e8df84f5919c31d";
     var contractABI = [
       {
         "constant": false,
@@ -175,7 +175,7 @@ class Game extends React.Component {
       this.setState({
         allAccounts: accounts,
         XuserAccount: accounts[0],
-        OuserAccount: accounts[1] 
+        OuserAccount: accounts[0] 
       })
     })
     .then(() => this.ShowBalances())
@@ -232,7 +232,7 @@ class Game extends React.Component {
       }
 
     };
-    if(this.state.xIsNext) {
+    if(!this.state.xIsNext) {
       this.state.contract.methods.SetBoardState(boardStateStr).send({from: this.state.OuserAccount})
       .then(() => this.GetBoardState())
     }
