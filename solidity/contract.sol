@@ -3,7 +3,6 @@ contract Winner {
     
     string winner = "no winner yet";
     string betWinner = "no bet";
-    uint256 betAmount= 0;
     int numberOfPlayers = 0;
     mapping(address => bool) isPlayer;
     string boardState = "---------";
@@ -34,11 +33,10 @@ contract Winner {
     }
     
 
-    function BuyIn(bool _isX) public payable cost(3 ether) {
+    function BuyIn() public payable cost(3 ether) {
         if(numberOfPlayers < 2){
             isPlayer[msg.sender] = true;
-            betAmount = betAmount + msg.value;
-            numberOfPlayers = numberOfPlayers + 1;
+            numberOfPlayers += 1;
         }
         else{
             msg.sender.transfer(msg.value);    
@@ -46,13 +44,12 @@ contract Winner {
     }
 
     function GetBet() public view returns(uint256){
-        return betAmount;
+        return address(this).balance;
     }
     
     function BettingResult() public {
         if(isPlayer[msg.sender] == true){
-            msg.sender.transfer(betAmount);
-            betAmount = 0;
+            msg.sender.transfer(address(this).balance);
             numberOfPlayers = 0;
         }
 
