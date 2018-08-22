@@ -55,7 +55,7 @@ contract Winner {
         }
     } 
     
-    function BettingResult() public {
+    function ClaimBet() public {
         if(isPlayer[msg.sender] == true){
             msg.sender.transfer(address(this).balance);
             numberOfPlayers = 0;

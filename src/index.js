@@ -4,8 +4,8 @@ import './index.css';
 // TUTO
 import Web3 from 'web3';
 import { isNull } from 'util';
-var web3 = new Web3(Web3.givenProvider); //To use at deployement: Metamask and Ropsten
-//var web3 = new Web3("http://localhost:8545"); //To during dev.: use with Ganache
+//var web3 = new Web3(Web3.givenProvider); //To use at deployement: Metamask and Ropsten
+var web3 = new Web3("http://localhost:8545"); //To during dev.: use with Ganache
 
 function Square (props) {
   return (
@@ -78,7 +78,7 @@ class Game extends React.Component {
   //TUTO
   initState(){
     // Get contract
-    var contractAddress = "0x8a1d7f6877df46bb4b5dd11a4e8df84f5919c31d";
+    var contractAddress = "0xd4813be4e6d4a92159c58f87674f33c2f3ca898a";
     var contractABI = [
       {
         "constant": false,
@@ -127,6 +127,15 @@ class Game extends React.Component {
         "type": "function"
       },
       {
+        "constant": false,
+        "inputs": [],
+        "name": "ClaimBet",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
         "constant": true,
         "inputs": [],
         "name": "GetBet",
@@ -138,15 +147,6 @@ class Game extends React.Component {
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "BettingResult",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -175,7 +175,7 @@ class Game extends React.Component {
       this.setState({
         allAccounts: accounts,
         XuserAccount: accounts[0],
-        OuserAccount: accounts[0] 
+        OuserAccount: accounts[1] 
       })
     })
     .then(() => this.ShowBalances())
@@ -269,13 +269,13 @@ class Game extends React.Component {
       console.log("Winner is: " + _winner + ", SENDING WINNER")
       //Update new Winner
       if(_winner === 'X') {
-        this.state.contract.methods.BettingResult().send({from: this.state.XuserAccount})
+        this.state.contract.methods.ClaimBet().send({from: this.state.XuserAccount})
         .then(() => this.ShowBalances())
         .then(() => this.GetBet())
         .then(() => this.ResetHistory())
       }
       else{
-        this.state.contract.methods.BettingResult().send({from: this.state.OuserAccount})
+        this.state.contract.methods.ClaimBet().send({from: this.state.OuserAccount})
         .then(() => this.ShowBalances())
         .then(() => this.GetBet())
         .then(() => this.ResetHistory())
