@@ -14,6 +14,11 @@ contract Winner {
         address indexed _by
     );
     
+    modifier checkIfPlayer(address _sender){
+        require(isPlayer[_sender]);
+        _;
+    }
+    
     modifier cost(uint value){
         if(msg.value == value){
             _;
@@ -23,7 +28,7 @@ contract Winner {
         }
     }
     
-    function SetBoardState(string _boardState) public {
+    function SetBoardState(string _boardState) public checkIfPlayer(msg.sender){
         boardState = _boardState;
         emit BoardChange(msg.sender);
     }
@@ -47,19 +52,15 @@ contract Winner {
         return address(this).balance;
     }
     
-    function RecoverBet() public{
-        if(isPlayer[msg.sender] == true){
-            isPlayer[msg.sender] = false;
-            msg.sender.transfer(3 ether);
-            numberOfPlayers -= 1;
-        }
+    function RecoverBet() public checkIfPlayer(msg.sender){
+        isPlayer[msg.sender] = false;
+        msg.sender.transfer(3 ether);
+        numberOfPlayers -= 1;
     } 
     
-    function ClaimBet() public {
-        if(isPlayer[msg.sender] == true){
-            msg.sender.transfer(address(this).balance);
-            numberOfPlayers = 0;
-        }
+    function ClaimBet() public checkIfPlayer(msg.sender){
+        msg.sender.transfer(address(this).balance);
+        numberOfPlayers = 0;
 
     }
 }

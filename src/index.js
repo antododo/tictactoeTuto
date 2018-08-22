@@ -78,7 +78,7 @@ class Game extends React.Component {
   //TUTO
   initState(){
     // Get contract
-    var contractAddress = "0xd4813be4e6d4a92159c58f87674f33c2f3ca898a";
+    var contractAddress = "0xa0953983f5af5777738cd5d0304e4909d03626e6";
     var contractABI = [
       {
         "constant": false,
