@@ -10,16 +10,7 @@ contract Winner {
     constructor() public payable{
     }
     
-    modifier cost(uint value){
-        if(msg.value == value){
-            _;
-        }
-        else{
-            msg.sender.transfer(msg.value);    
-        }
-    }
-    
-    function BuyIn() public payable cost(3000000000000000000) {
+    function BuyIn() public payable {
         if(numberOfPlayers < 2){
             isPlayer[msg.sender] = true;
             betAmount = betAmount + msg.value;
@@ -34,12 +25,10 @@ contract Winner {
         return betAmount;
     }
     
-    function BettingResult() public {
-        if(isPlayer[msg.sender] == true){
-            msg.sender.transfer(betAmount);
-            betAmount = 0;
-            numberOfPlayers = 0;
-        }
-
+    function ClaimBet() public {
+        require(isPlayer[msg.sender])
+        msg.sender.transfer(betAmount);
+        betAmount = 0;
+        numberOfPlayers = 0;
     }
 }

@@ -119,7 +119,7 @@ class Game extends React.Component {
 		{
 			"constant": false,
 			"inputs": [],
-			"name": "BettingResult",
+			"name": "ClaimBet",
 			"outputs": [],
 			"payable": true,
 			"stateMutability": "payable",
@@ -195,13 +195,13 @@ class Game extends React.Component {
     console.log("Winner is: " + _winner + ", SENDING WINNER")
     //Update new Winner
     if(_winner === 'X') {
-      this.state.contract.methods.BettingResult().send({from: this.state.XuserAccount})
+      this.state.contract.methods.ClaimBet().send({from: this.state.XuserAccount})
       .then(()=>{
         this.ShowBalances()
       })
     }
     else{
-      this.state.contract.methods.BettingResult().send({from: this.state.OuserAccount})
+      this.state.contract.methods.ClaimBet().send({from: this.state.OuserAccount})
       .then(()=>{
         this.ShowBalances()
       })
