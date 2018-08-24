@@ -26,7 +26,7 @@ contract Winner {
     }
     
     function ClaimBet() public {
-        require(isPlayer[msg.sender])
+        require(isPlayer[msg.sender]);
         msg.sender.transfer(betAmount);
         betAmount = 0;
         numberOfPlayers = 0;
