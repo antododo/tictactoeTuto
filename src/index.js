@@ -56,6 +56,7 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
+      contractTransactionPending: false,
       //TUTO
       currentBet: 0,
       contract: null,
@@ -75,7 +76,6 @@ class Game extends React.Component {
 
   //TUTO
   componentDidMount(){
-
     // Get accounts
     console.log("Getting players accounts")
     web3.eth.getAccounts((error, accounts) => {
@@ -90,7 +90,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0x2aacb7c5e82abc89f8055708e077c29540b28cf2";
+    var contractAddress = "0x55bd13f26c9a3d62ee890169ce290617ef83216f";
     var contractABI = [
       {
         "constant": false,
@@ -219,22 +219,24 @@ class Game extends React.Component {
 }
 
   //TUTO
-  SendWinner(_winner){
+  SendWinner(_winner, _contractTransactionPending){
+    console.log("Inside SendWinner()!")
     console.log("Winner is: " + _winner + ", SENDING WINNER")
-    //Update new Winner
-    if(_winner === 'X') {
-      this.state.contract.methods.ClaimBet(true).send({from: this.state.XuserAccount})
-      .then(()=>{
-        this.ShowBalances()
-      })
-    }
-    else{
-      this.state.contract.methods.ClaimBet(false).send({from: this.state.OuserAccount})
-      .then(()=>{
-        this.ShowBalances()
-      })
-    }    
+      if(_winner === 'X') {
+        this.state.contract.methods.ClaimBet(true).send({from: this.state.XuserAccount, gasLimit: "300000"})
+        .then(()=>{
+          this.ShowBalances()
+        })
+      }
+      else{
+        this.state.contract.methods.ClaimBet(false).send({from: this.state.OuserAccount, gasLimit: "300000"})
+        .then(()=>{
+          this.ShowBalances()
+        })
+      }   
   }
+    //Update new Winner
+
 
   BuyIn(){
     let bet = this.state.web3.utils.toWei('3', 'ether');
@@ -281,9 +283,8 @@ class Game extends React.Component {
     // Workaround to prevent loop with SendWinner: && this.state.currentBet !== 0
     if (winner && this.state.currentBet !== 0) {
       //TUTO
-      //setTimeout(this.SendWinner(winner), 1000);
-      this.SendWinner(winner);
       status = 'Winner: ' + winner;
+      this.SendWinner(winner);
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }

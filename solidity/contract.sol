@@ -4,7 +4,7 @@ contract Winner {
     uint256 betAmount= 0;
     uint256 numberOfPlayers = 0;
     mapping(address => bool) isPlayer;
-    address[] playerAddresses; 
+    address[] public playerAddresses; 
     uint256 gameIndex = 0;
     
     constructor() public payable{
@@ -35,7 +35,7 @@ contract Winner {
     
     function ClaimBet(bool _isX) public {
         require(isPlayer[msg.sender]);
-        /*
+        
         emit WinnerIs(
             //playerAddresses[_isX ? 1 : 0], 
             //playerAddresses[!_isX ? 1 : 0],
@@ -44,7 +44,7 @@ contract Winner {
             gameIndex, 
             betAmount
             );
-        */
+        
         msg.sender.transfer(betAmount);
         betAmount = 0;
         delete playerAddresses;
