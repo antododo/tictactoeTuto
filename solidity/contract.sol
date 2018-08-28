@@ -37,10 +37,8 @@ contract Winner {
         require(isPlayer[msg.sender]);
         
         emit WinnerIs(
-            //playerAddresses[_isX ? 1 : 0], 
-            //playerAddresses[!_isX ? 1 : 0],
-            playerAddresses[0],
-            playerAddresses[1],
+            playerAddresses[_isX ? 1 : 0], 
+            playerAddresses[!_isX ? 1 : 0],
             gameIndex, 
             betAmount
             );
