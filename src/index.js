@@ -90,8 +90,8 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0xd80d78bca48ab9aa5290fab6ce601d2bc725871c";
-    var contractABI =[
+    var contractAddress = "0x05b5a846f963d38e96e05e3b323f624c28d66721";
+    var contractABI = [
       {
         "constant": false,
         "inputs": [],
@@ -118,6 +118,16 @@ class Game extends React.Component {
       {
         "anonymous": false,
         "inputs": [
+          {
+            "indexed": true,
+            "name": "_winnerAddress",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "name": "_loserAddress",
+            "type": "address"
+          },
           {
             "indexed": true,
             "name": "_gameIndex",
@@ -228,8 +238,10 @@ class Game extends React.Component {
 
   BuyIn(){
     let bet = this.state.web3.utils.toWei('3', 'ether');
-    this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet});
-    this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
+    //IMPORTANT: You need to specify a gas limit otherwise ganache tops it at 90000 gas by default.
+    //When saving the address of the players, BuyIn() uses more then 100K of gaz.
+    this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet, gasLimit: "300000"});
+    this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet, gasLimit: "300000"})
     .then(()=>{
       //Show users balances
       this.ShowBalances();
