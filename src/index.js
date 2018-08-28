@@ -90,7 +90,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0x05b5a846f963d38e96e05e3b323f624c28d66721";
+    var contractAddress = "0x2aacb7c5e82abc89f8055708e077c29540b28cf2";
     var contractABI = [
       {
         "constant": false,
@@ -281,7 +281,8 @@ class Game extends React.Component {
     // Workaround to prevent loop with SendWinner: && this.state.currentBet !== 0
     if (winner && this.state.currentBet !== 0) {
       //TUTO
-      this.SendWinner(winner)
+      //setTimeout(this.SendWinner(winner), 1000);
+      this.SendWinner(winner);
       status = 'Winner: ' + winner;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
