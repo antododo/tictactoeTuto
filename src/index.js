@@ -90,47 +90,69 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0xc6f05f5418a3e0fec2e63509c208b608f032b6a4";
-    var contractABI = [
-		{
-			"constant": false,
-			"inputs": [],
-			"name": "BuyIn",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [],
-			"name": "GetBet",
-			"outputs": [
-				{
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [],
-			"name": "ClaimBet",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"inputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "constructor"
-		}
-	]
+    var contractAddress = "0xd80d78bca48ab9aa5290fab6ce601d2bc725871c";
+    var contractABI =[
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "BuyIn",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_isX",
+            "type": "bool"
+          }
+        ],
+        "name": "ClaimBet",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "_gameIndex",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "_betAmount",
+            "type": "uint256"
+          }
+        ],
+        "name": "WinnerIs",
+        "type": "event"
+      },
+      {
+        "inputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "constructor"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "GetBet",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ]
 
     this.setState({
       contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
@@ -191,13 +213,13 @@ class Game extends React.Component {
     console.log("Winner is: " + _winner + ", SENDING WINNER")
     //Update new Winner
     if(_winner === 'X') {
-      this.state.contract.methods.ClaimBet().send({from: this.state.XuserAccount})
+      this.state.contract.methods.ClaimBet(true).send({from: this.state.XuserAccount})
       .then(()=>{
         this.ShowBalances()
       })
     }
     else{
-      this.state.contract.methods.ClaimBet().send({from: this.state.OuserAccount})
+      this.state.contract.methods.ClaimBet(false).send({from: this.state.OuserAccount})
       .then(()=>{
         this.ShowBalances()
       })
