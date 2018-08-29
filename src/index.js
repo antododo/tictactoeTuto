@@ -90,7 +90,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0x55bd13f26c9a3d62ee890169ce290617ef83216f";
+    var contractAddress = "0xc6f05f5418a3e0fec2e63509c208b608f032b6a4";
     var contractABI = [
       {
         "constant": false,
