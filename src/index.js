@@ -56,7 +56,6 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
-      contractTransactionPending: false,
       //TUTO
       currentBet: 0,
       contract: null,
@@ -65,6 +64,7 @@ class Game extends React.Component {
       XuserBalance: 0,
       OuserAccount: null,
       OuserBalance: 0,
+      isGameStarted: false,
       web3: web3,
     };
 
@@ -76,6 +76,7 @@ class Game extends React.Component {
 
   //TUTO
   componentDidMount(){
+
     // Get accounts
     console.log("Getting players accounts")
     web3.eth.getAccounts((error, accounts) => {
@@ -92,77 +93,45 @@ class Game extends React.Component {
     // Get contract
     var contractAddress = "0xc6f05f5418a3e0fec2e63509c208b608f032b6a4";
     var contractABI = [
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "BuyIn",
-        "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_isX",
-            "type": "bool"
-          }
-        ],
-        "name": "ClaimBet",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "name": "_winnerAddress",
-            "type": "address"
-          },
-          {
-            "indexed": true,
-            "name": "_loserAddress",
-            "type": "address"
-          },
-          {
-            "indexed": true,
-            "name": "_gameIndex",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "name": "_betAmount",
-            "type": "uint256"
-          }
-        ],
-        "name": "WinnerIs",
-        "type": "event"
-      },
-      {
-        "inputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "constructor"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "GetBet",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      }
-    ]
+		{
+			"constant": false,
+			"inputs": [],
+			"name": "BuyIn",
+			"outputs": [],
+			"payable": true,
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "GetBet",
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [],
+			"name": "BettingResult",
+			"outputs": [],
+			"payable": true,
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"payable": true,
+			"stateMutability": "payable",
+			"type": "constructor"
+		}
+	]
 
     this.setState({
       contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
@@ -219,31 +188,31 @@ class Game extends React.Component {
 }
 
   //TUTO
-  SendWinner(_winner, _contractTransactionPending){
-    console.log("Inside SendWinner()!")
+  SendWinner(_winner){
+    if(this.state.isGameStarted === true){
+      this.setState({isGameStarted: false});
+    };
     console.log("Winner is: " + _winner + ", SENDING WINNER")
-      if(_winner === 'X') {
-        this.state.contract.methods.ClaimBet(true).send({from: this.state.XuserAccount, gasLimit: "300000"})
-        .then(()=>{
-          this.ShowBalances()
-        })
-      }
-      else{
-        this.state.contract.methods.ClaimBet(false).send({from: this.state.OuserAccount, gasLimit: "300000"})
-        .then(()=>{
-          this.ShowBalances()
-        })
-      }   
-  }
     //Update new Winner
-
+    if(_winner === 'X') {
+      this.state.contract.methods.BettingResult().send({from: this.state.XuserAccount})
+      .then(()=>{
+        this.ShowBalances()
+      })
+    }
+    else{
+      this.state.contract.methods.BettingResult().send({from: this.state.OuserAccount})
+      .then(()=>{
+        this.ShowBalances()
+      })
+    }    
+  }
 
   BuyIn(){
+    this.setState({isGameStarted: true});
     let bet = this.state.web3.utils.toWei('3', 'ether');
-    //IMPORTANT: You need to specify a gas limit otherwise ganache tops it at 90000 gas by default.
-    //When saving the address of the players, BuyIn() uses more then 100K of gaz.
-    this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet, gasLimit: "300000"});
-    this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet, gasLimit: "300000"})
+    this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet});
+    this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
     .then(()=>{
       //Show users balances
       this.ShowBalances();
@@ -283,8 +252,8 @@ class Game extends React.Component {
     // Workaround to prevent loop with SendWinner: && this.state.currentBet !== 0
     if (winner && this.state.currentBet !== 0) {
       //TUTO
+      this.SendWinner(winner)
       status = 'Winner: ' + winner;
-      this.SendWinner(winner);
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
@@ -301,14 +270,14 @@ class Game extends React.Component {
         <div>
           <div>
             Player X address:
-            <select id="XaddressSelect" value={selectedXaddress || ''} onChange={this.handleXAddressChange} disabled={this.state.currentBet !== 0}>
+            <select id="XaddressSelect" value={selectedXaddress || ''} onChange={this.handleXAddressChange} disabled={this.state.isGameStarted}>
               {optionItems}
             </select>
             <br/>
             {"Player X balance: " + this.state.XuserBalance + " ETH"}
             <br/>
             Player O address:
-            <select id="OaddressSelect" value={selectedOaddress || ''} onChange={this.handleOAddressChange} disabled={this.state.currentBet !== 0}>
+            <select id="OaddressSelect" value={selectedOaddress || ''} onChange={this.handleOAddressChange} disabled={this.state.isGameStarted}>
               {optionItems}
             </select>
             <br/>
