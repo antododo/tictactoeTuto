@@ -4,7 +4,7 @@ import './index.css';
 // TUTO
 import Web3 from 'web3';
 //var web3 = new Web3(Web3.givenProvider || "http://localhost:7545"); //To use at deployement: Metamask and Ropsten
-var web3 = new Web3("http://localhost:8545"); //To during dev.: use with Ganache
+var web3 = new Web3("http://localhost:7545"); //To during dev.: use with Ganache
 
 function Square (props) {
   return (
@@ -91,47 +91,47 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0xc6f05f5418a3e0fec2e63509c208b608f032b6a4";
+    var contractAddress = "0x345ca3e014aaf5dca488057592ee47305d9b3e10";
     var contractABI = [
-		{
-			"constant": false,
-			"inputs": [],
-			"name": "BuyIn",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [],
-			"name": "GetBet",
-			"outputs": [
-				{
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [],
-			"name": "BettingResult",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"inputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "constructor"
-		}
-	]
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "BuyIn",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "GetBet",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "BettingResult",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "constructor"
+      }
+    ]
 
     this.setState({
       contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
@@ -190,6 +190,11 @@ class Game extends React.Component {
   //TUTO
   SendWinner(_winner){
     if(this.state.isGameStarted === true){
+      //TODO
+      //Warning: Cannot update during an existing state transition 
+      //(such as within `render` or another component's constructor). 
+      //Render methods should be a pure function of props and state; 
+      //constructor side-effects are an anti-pattern, but can be moved to `componentWillMount`.
       this.setState({isGameStarted: false});
     };
     console.log("Winner is: " + _winner + ", SENDING WINNER")
