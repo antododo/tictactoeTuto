@@ -64,7 +64,6 @@ class Game extends React.Component {
       XuserBalance: 0,
       OuserAccount: null,
       OuserBalance: 0,
-      isGameStarted: false,
       web3: web3,
     };
 
@@ -91,7 +90,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0x345ca3e014aaf5dca488057592ee47305d9b3e10";
+    var contractAddress = "0xf204a4ef082f5c04bb89f7d5e6568b796096735a";
     var contractABI = [
       {
         "constant": false,
@@ -183,20 +182,12 @@ class Game extends React.Component {
     this.state.contract.methods.GetBet().call()
     .then((result)=>{
       // 1 ETH = 1000000000000000000 WEI
-      this.setState({currentBet: result/1000000000000000000});
+       this.setState({currentBet: result/1000000000000000000});
     })
 }
 
   //TUTO
   SendWinner(_winner){
-    if(this.state.isGameStarted === true){
-      //TODO
-      //Warning: Cannot update during an existing state transition 
-      //(such as within `render` or another component's constructor). 
-      //Render methods should be a pure function of props and state; 
-      //constructor side-effects are an anti-pattern, but can be moved to `componentWillMount`.
-      this.setState({isGameStarted: false});
-    };
     console.log("Winner is: " + _winner + ", SENDING WINNER")
     //Update new Winner
     if(_winner === 'X') {
@@ -275,20 +266,20 @@ class Game extends React.Component {
         <div>
           <div>
             Player X address:
-            <select id="XaddressSelect" value={selectedXaddress || ''} onChange={this.handleXAddressChange} disabled={this.state.isGameStarted}>
+            <select id="XaddressSelect" value={selectedXaddress || ''} onChange={this.handleXAddressChange} disabled={this.state.currentBet !== 0}>
               {optionItems}
             </select>
             <br/>
             {"Player X balance: " + this.state.XuserBalance + " ETH"}
             <br/>
             Player O address:
-            <select id="OaddressSelect" value={selectedOaddress || ''} onChange={this.handleOAddressChange} disabled={this.state.isGameStarted}>
+            <select id="OaddressSelect" value={selectedOaddress || ''} onChange={this.handleOAddressChange} disabled={this.state.currentBet !== 0}>
               {optionItems}
             </select>
             <br/>
             {"Player O balance: " + this.state.OuserBalance + " ETH"}
             <br/>
-            <button onClick={this.BuyIn}>Both players buy in (3ETH)</button>
+            <button onClick={this.BuyIn} disabled={this.state.currentBet !== 0}>Both players buy in (3ETH)</button>
             <br/>
             {"Current bet: " + this.state.currentBet + " ETH"}
           </div>
