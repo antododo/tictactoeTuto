@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 // TUTO
 import Web3 from 'web3';
-//var web3 = new Web3(Web3.givenProvider || "http://localhost:7545"); //To use at deployement: Metamask and Ropsten
-var web3 = new Web3("http://localhost:7545"); //To during dev.: use with Ganache
+//Ganache use port 7545 by default
+var web3 = new Web3("http://localhost:7545"); 
 
 function Square (props) {
   return (
-    <button className='square' onClick={props.onClick}>
+    <button className='square' onClick={props.onClick} disabled={this.props.disabled} >
       {props.value}
     </button>
   );
@@ -20,6 +20,7 @@ class Board extends React.Component {
       <Square
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
+        disabled={this.props.disabled}
       />
     );
   }
@@ -56,28 +57,23 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
-      //TUTO
       currentBet: 0,
-      contract: null,
       allAccounts: [],
       XuserAccount: null,
       XuserBalance: 0,
       OuserAccount: null,
       OuserBalance: 0,
+      //TUTO
+      contract: null,
       web3: web3,
     };
 
-    //TUTO
     // Binding
     this.BuyIn = this.BuyIn.bind(this);
-
   }
 
-  //TUTO
   componentDidMount(){
-
-    // Get accounts
-    console.log("Getting players accounts")
+    // Setting accounts
     web3.eth.getAccounts((error, accounts) => {
       this.setState({
         allAccounts: accounts,
@@ -186,10 +182,8 @@ class Game extends React.Component {
     })
 }
 
-  //TUTO
   SendWinner(_winner){
-    console.log("Winner is: " + _winner + ", SENDING WINNER")
-    //Update new Winner
+    console.log("Winner is: " + _winner)
     if(_winner === 'X') {
       this.state.contract.methods.BettingResult().send({from: this.state.XuserAccount})
       .then(()=>{
@@ -201,16 +195,14 @@ class Game extends React.Component {
       .then(()=>{
         this.ShowBalances()
       })
-    }    
+    } 
   }
 
   BuyIn(){
-    this.setState({isGameStarted: true});
     let bet = this.state.web3.utils.toWei('3', 'ether');
     this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet});
     this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
     .then(()=>{
-      //Show users balances
       this.ShowBalances();
     })
   }
@@ -246,8 +238,8 @@ class Game extends React.Component {
 
     let status;
     // Workaround to prevent loop with SendWinner: && this.state.currentBet !== 0
-    if (winner && this.state.currentBet !== 0) {
-      //TUTO
+    // Ugly... but working
+    if (winner && this.state.currentBet !== 0) {    
       this.SendWinner(winner)
       status = 'Winner: ' + winner;
     } else {
@@ -290,6 +282,7 @@ class Game extends React.Component {
           <Board
           squares={current.squares}
           onClick={(i) => this.handleClick(i)}
+          disabled={this.state.currentBet === 0}
           />
         </div>
         <div className="game-info">

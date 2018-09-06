@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 // TUTO
 import Web3 from 'web3';
-//var web3 = new Web3(Web3.givenProvider || "http://localhost:7545"); //To use at deployement: Metamask and Ropsten
-var web3 = new Web3("http://localhost:7545"); //To during dev.: use with Ganache
+//Ganache use port 7545 by default
+var web3 = new Web3("http://localhost:7545"); 
 
 function Square (props) {
   return (
-    <button className='square' onClick={props.onClick}>
+    <button className='square' onClick={props.onClick} disabled={this.props.disabled} >
       {props.value}
     </button>
   );
@@ -20,6 +20,7 @@ class Board extends React.Component {
       <Square
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
+        disabled={this.props.disabled}
       />
     );
   }
@@ -56,29 +57,26 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
-      //TUTO
       currentBet: 0,
-      contract: null,
+      allAccounts: [],
       XuserAccount: null,
       XuserBalance: 0,
       OuserAccount: null,
       OuserBalance: 0,
-      web3: web3
+      //TUTO
+      contract: null,
+      web3: web3,
     };
 
-    //TUTO
     // Binding
     this.BuyIn = this.BuyIn.bind(this);
-
   }
 
-  //TUTO
   componentDidMount(){
-
-    // Get accounts
-    console.log("Getting players accounts")
+    // Setting accounts
     web3.eth.getAccounts((error, accounts) => {
       this.setState({
+        allAccounts: accounts,
         XuserAccount: accounts[0],
         OuserAccount: accounts[1] 
        })
@@ -88,47 +86,47 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0xf7e3e47e06f1bddecb1b2f3a7f60b6b25fd2e233";
+    var contractAddress = "0xf204a4ef082f5c04bb89f7d5e6568b796096735a";
     var contractABI = [
-		{
-			"constant": false,
-			"inputs": [],
-			"name": "BuyIn",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [],
-			"name": "GetBet",
-			"outputs": [
-				{
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [],
-			"name": "BettingResult",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"inputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "constructor"
-		}
-	]
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "BuyIn",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "GetBet",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "BettingResult",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "constructor"
+      }
+    ]
 
     this.setState({
       contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
@@ -180,14 +178,12 @@ class Game extends React.Component {
     this.state.contract.methods.GetBet().call()
     .then((result)=>{
       // 1 ETH = 1000000000000000000 WEI
-      this.setState({currentBet: result/1000000000000000000});
+       this.setState({currentBet: result/1000000000000000000});
     })
 }
 
-  //TUTO
   SendWinner(_winner){
-    console.log("Winner is: " + _winner + ", SENDING WINNER")
-    //Update new Winner
+    console.log("Winner is: " + _winner)
     if(_winner === 'X') {
       this.state.contract.methods.BettingResult().send({from: this.state.XuserAccount})
       .then(()=>{
@@ -199,7 +195,7 @@ class Game extends React.Component {
       .then(()=>{
         this.ShowBalances()
       })
-    }    
+    } 
   }
 
   BuyIn(){
@@ -207,9 +203,20 @@ class Game extends React.Component {
     this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet});
     this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
     .then(()=>{
-      //Show users balances
       this.ShowBalances();
     })
+  }
+
+  handleXAddressChange = (event) =>{
+    this.setState({XuserAccount: event.target.value}, () => {
+      this.ShowBalances();
+  });
+  }
+
+  handleOAddressChange = (event) =>{
+    this.setState({OuserAccount: event.target.value}, () => {
+    this.ShowBalances();
+  });
   }
 
   render() {
@@ -231,27 +238,40 @@ class Game extends React.Component {
 
     let status;
     // Workaround to prevent loop with SendWinner: && this.state.currentBet !== 0
-    if (winner && this.state.currentBet !== 0) {
-      //TUTO
+    // Ugly... but working
+    if (winner && this.state.currentBet !== 0) {    
       this.SendWinner(winner)
       status = 'Winner: ' + winner;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
+    
+    let optionItems = this.state.allAccounts.map((account) =>
+    <option key={account}>{account}</option>
+    );
+
+    let selectedXaddress = this.state.XuserAccount;
+    let selectedOaddress = this.state.OuserAccount;
 
     return (
       <div>
         <div>
           <div>
-            {"Player X address: " + this.state.XuserAccount}
+            Player X address:
+            <select id="XaddressSelect" value={selectedXaddress || ''} onChange={this.handleXAddressChange} disabled={this.state.currentBet !== 0}>
+              {optionItems}
+            </select>
             <br/>
             {"Player X balance: " + this.state.XuserBalance + " ETH"}
             <br/>
-            {"Player O address: " + this.state.OuserAccount}
+            Player O address:
+            <select id="OaddressSelect" value={selectedOaddress || ''} onChange={this.handleOAddressChange} disabled={this.state.currentBet !== 0}>
+              {optionItems}
+            </select>
             <br/>
             {"Player O balance: " + this.state.OuserBalance + " ETH"}
             <br/>
-            <button onClick={this.BuyIn}>Both players buy in (3ETH)</button>
+            <button onClick={this.BuyIn} disabled={this.state.currentBet !== 0}>Both players buy in (3ETH)</button>
             <br/>
             {"Current bet: " + this.state.currentBet + " ETH"}
           </div>
@@ -262,6 +282,7 @@ class Game extends React.Component {
           <Board
           squares={current.squares}
           onClick={(i) => this.handleClick(i)}
+          disabled={this.state.currentBet === 0}
           />
         </div>
         <div className="game-info">
