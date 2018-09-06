@@ -1,16 +1,14 @@
 # Guide étape par étape pour la création d'un jeu blockchain
 
 ## 01 - Faire marcher le jeu sans Solidity 
-Pour obtenir la version de base du jeu Tic Tac Toe
--clone repo: git clone ***
--npm install
--npm start
-
+Référez-vous au document d'installation pour installer les outils nécessaires et avoir le code source de base du jeu Tic Tac Toe.
+Pour démarrer et tester le jeu : `npm start`
 
 ## 02 - Rajouter le contrat Solidity avec Remix
 
 ### 02.01 Écrire le code
-Aller sur http://remix.ethereum.org et écrire le code qui se trouve dans le fichier contract.sol
+Nous allons écrire le code du contrat Ethereum sur [http://remix.ethereum.org](http://remix.ethereum.org)
+le code que nous allons écrire se trouve dans le fichier contract.sol
 ### 02.02 Lancer Ganache
 lancer simplement Ganache et vérifier que le RPC server est bien HTTP://127.0.0.1:7545
 
@@ -66,16 +64,16 @@ Créer une fonction componentDidMount(){}, cette fonction est exécutée une foi
 
 
 ### 04 Créer le contrat 
-		- Récupérer l’adresse du contrat et l'ABI
+	- Récupérer l’adresse du contrat et l'ABI
 
-		ABI
-		adresse 
-	This.state
+ABI
+adresse 
+This.state
 
 GetBet
 
-##Rajouter les fonctions web3 au jeu 
-	Ecrire la fonction send winner + rajouter if winner 
-	Ecrire la fonction Bet on + rajouter le bouton 
+## Rajouter les fonctions web3 au jeu 
+Ecrire la fonction send winner + rajouter if winner 
+Ecrire la fonction Bet on + rajouter le bouton 
 
 
