@@ -9,6 +9,8 @@ Pour démarrer et tester le jeu : `npm start`
 ### 02.01 Écrire le code
 Nous allons écrire le code du contrat Ethereum sur [http://remix.ethereum.org](http://remix.ethereum.org)
 le code que nous allons écrire se trouve dans le fichier contract.sol
+Le code est commenté pour expliquer les étapes.
+
 ### 02.02 Lancer Ganache
 lancer simplement Ganache et vérifier que le RPC server est bien HTTP://127.0.0.1:7545
 
