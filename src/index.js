@@ -8,7 +8,7 @@ var web3 = new Web3("http://localhost:7545");
 
 function Square (props) {
   return (
-    <button className='square' onClick={props.onClick} disabled={this.props.disabled} >
+    <button className='square' onClick={props.onClick} disabled={props.disabled} >
       {props.value}
     </button>
   );
@@ -86,7 +86,7 @@ class Game extends React.Component {
     })
 
     // Get contract
-    var contractAddress = "0xf204a4ef082f5c04bb89f7d5e6568b796096735a";
+    var contractAddress = "0x8cdaf0cd259887258bc13a92c0a6da92698644c0";
     var contractABI = [
       {
         "constant": false,
@@ -119,12 +119,6 @@ class Game extends React.Component {
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
-      },
-      {
-        "inputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "constructor"
       }
     ]
 
