@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-// TUTO
+//  **** 03 ****
 import Web3 from 'web3';
-//Ganache use port 7545 by default
+//Ganache's port is 7545 by default
 var web3 = new Web3("http://localhost:7545"); 
 
 function Square (props) {
@@ -63,9 +63,9 @@ class Game extends React.Component {
       XuserBalance: 0,
       OuserAccount: null,
       OuserBalance: 0,
-      //TUTO
-      contract: null,
+      // **** 03.01 ****
       web3: web3,
+      contract: null,
     };
 
     // Binding
@@ -73,18 +73,8 @@ class Game extends React.Component {
   }
 
   componentDidMount(){
-    // Setting accounts
-    web3.eth.getAccounts((error, accounts) => {
-      this.setState({
-        allAccounts: accounts,
-        XuserAccount: accounts[0],
-        OuserAccount: accounts[1] 
-       })
-    })
-    .then(()=>{
-      this.ShowBalances()
-    })
 
+    // **** 03.02 ****
     // Get contract
     var contractAddress = "0x8cdaf0cd259887258bc13a92c0a6da92698644c0";
     var contractABI = [
@@ -114,7 +104,7 @@ class Game extends React.Component {
       {
         "constant": false,
         "inputs": [],
-        "name": "BettingResult",
+        "name": "IfWinner",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -122,9 +112,100 @@ class Game extends React.Component {
       }
     ]
 
+    // **** 03.02 ****
     this.setState({
       contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
     })
+
+    // **** 04.01 ****
+    // Setting accounts
+    web3.eth.getAccounts((error, accounts) => {
+      // do something after getting the accounts
+      this.setState({
+        allAccounts: accounts,
+        XuserAccount: accounts[0],
+        OuserAccount: accounts[1] 
+       })
+    })
+    // **** 04.02 ****
+    // Afer getting accounts, update balances
+    .then(()=>{
+      this.ShowBalances()
+    })
+
+  }
+
+  // **** 04.02 ****
+  // Show X and O balances
+  ShowBalances(){
+    // Getting X user balance
+    web3.eth.getBalance(this.state.XuserAccount)
+    .then((result)=>{
+      this.setState({
+        XuserBalance: result/1000000000000000000
+      })
+    })
+    // Getting O user balance
+    web3.eth.getBalance(this.state.OuserAccount)
+    .then((result)=>{
+      this.setState({
+        OuserBalance: result/1000000000000000000
+      })
+    })
+    // Show current bet
+    this.state.contract.methods.GetBet().call()
+    .then((result)=>{
+      // 1 ETH = 1000000000000000000 WEI
+       this.setState({currentBet: result/1000000000000000000});
+    })
+  }
+
+  // **** 05.01 ****
+  handleXAddressChange = (event) =>{
+    this.setState({XuserAccount: event.target.value},
+      () => {
+        this.ShowBalances()
+      }
+    )
+  }
+
+  // **** 05.01 ****
+  handleOAddressChange = (event) =>{
+    this.setState({OuserAccount: event.target.value},
+      () => {
+        this.ShowBalances()
+      }
+    )
+  }
+
+  // **** 05.02 ****
+  BuyIn(){
+    //Reset the game
+    this.jumpTo(0);
+    // Set the bet
+    let bet = this.state.web3.utils.toWei('3', 'ether');
+    this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet})
+    this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
+    .then(()=>{
+      this.ShowBalances();
+    })
+  }
+
+  // **** 05.03 *****
+  IfWinner(_winner){
+    console.log("Winner is: " + _winner)
+    if(_winner === 'X') {
+      this.state.contract.methods.IfWinner().send({from: this.state.XuserAccount})
+      .then(()=>{
+        this.ShowBalances()
+      })
+    }
+    else{
+      this.state.contract.methods.IfWinner().send({from: this.state.OuserAccount})
+      .then(()=>{
+        this.ShowBalances()
+      })
+    } 
   }
 
   handleClick(i) {
@@ -151,68 +232,6 @@ class Game extends React.Component {
     });
   }
 
-  //TUTO
-  // Show X and O balances
-  ShowBalances(){
-    // Getting X user balance
-    web3.eth.getBalance(this.state.XuserAccount)
-    .then((result)=>{
-      this.setState({
-        XuserBalance: result/1000000000000000000
-      })
-    })
-    // Getting O user balance
-    web3.eth.getBalance(this.state.OuserAccount)
-    .then((result)=>{
-      this.setState({
-        OuserBalance: result/1000000000000000000
-      })
-    })
-    // Show current bet
-    this.state.contract.methods.GetBet().call()
-    .then((result)=>{
-      // 1 ETH = 1000000000000000000 WEI
-       this.setState({currentBet: result/1000000000000000000});
-    })
-}
-
-  SendWinner(_winner){
-    console.log("Winner is: " + _winner)
-    if(_winner === 'X') {
-      this.state.contract.methods.BettingResult().send({from: this.state.XuserAccount})
-      .then(()=>{
-        this.ShowBalances()
-      })
-    }
-    else{
-      this.state.contract.methods.BettingResult().send({from: this.state.OuserAccount})
-      .then(()=>{
-        this.ShowBalances()
-      })
-    } 
-  }
-
-  BuyIn(){
-    let bet = this.state.web3.utils.toWei('3', 'ether');
-    this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet});
-    this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
-    .then(()=>{
-      this.ShowBalances();
-    })
-  }
-
-  handleXAddressChange = (event) =>{
-    this.setState({XuserAccount: event.target.value}, () => {
-      this.ShowBalances();
-  });
-  }
-
-  handleOAddressChange = (event) =>{
-    this.setState({OuserAccount: event.target.value}, () => {
-    this.ShowBalances();
-  });
-  }
-
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -231,10 +250,10 @@ class Game extends React.Component {
 
 
     let status;
-    // Workaround to prevent loop with SendWinner: && this.state.currentBet !== 0
+    // Workaround to prevent loop with IfWinner: && this.state.currentBet !== 0
     // Ugly... but working
     if (winner && this.state.currentBet !== 0) {    
-      this.SendWinner(winner)
+      this.IfWinner(winner)
       status = 'Winner: ' + winner;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');

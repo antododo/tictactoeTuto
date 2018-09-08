@@ -22,60 +22,148 @@ Dans Remix, Déployer le contrat en appuyant sur [Deploy].
 
 **IMPORTANT** ne pas fermer la page avec Remix
 
-## 03 - Rajouter Web3
+## 03 - Rajouter Web3 et le contrat 
 
 ### 03.01 - import web3
 installer web3 avec npm :
 `npm i  web3@1.0.0-beta.34`
-**TODO** Changer pour la dernière version de web3 beta.35 ??
+<!-- Changer pour la dernière version de web3 beta.35 ?? -->
 
-Importer web3 et créer une variable web3.
-```
-import Web3 from 'web3';
-var web3 = new Web3("http://localhost:7545");
-```
-Ajouter web3 à this.state
+Importer web3 et créer une variable web3 à coté des autres imports
+`import Web3 from 'web3';`
+`var web3 = new Web3("http://localhost:7545");`
+Dans le constructor de Game, ajouter web3 et un contract null à this.state
 `web3: web3,`
-Ne pas oublier de rajouter "," à la fin de la ligne précédente
+et 
+`contract: null,`
 
-### 03.02 - Get accounts
-Ajouter à this.state 
+### 03.02 - Créer le contrat 
+Nous allons retourner dans Remix de notre navigateur internet.
+Dans l'onglet Run, dans la section Deployed Contracts, cliquer sur l'icone 'Copy value to clipboard' à droite du nom du contract.
+Au début de la fonction componentDidMount(), écrire
+`var contractAddress = "PASTE_HERE";`
+en remplaçant PASTE_HERE par la valeur copiée dans Remix.
+
+Retournez dans remix, et allez l'onglet Compile, cliquer sur [Details] à coté du nom de notre contrat, trouver la section ABI et cliquer sur le logo 'Copy value to clipboard'. 
+À la suite, écrire : 
+`var contractABI = PASTE_HERE`
+en remplaçant PASTE_HERE par la valeur copiée dans Remix.
+
+Ensuite, nous allons mettre à jour notre State avec ce contrat:
 ```
-XuserAccount: null,
-XuserBalance: 0,
-OuserAccount: null,
-OuserBalance: 0,
+this.setState({
+  contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
+})
 ```
 
-Créer une fonction componentDidMount(){}, cette fonction est exécutée une fois que l'application est prête.
 
+## 04 - Afficher les comptes et le Bet
+
+### 04.01 - Récupérer les comptes
+Modifier la fonction componentDidMount(){} (cette fonction est exécutée une fois que l'application est prête.)
+Au lieu d'avoir une liste de compte définie par défaut, nous allons récupérer les comptes ETH avec web3.
+
+remplacer 
+`let accounts = ["1","2","3","4","5","6","7","8","9","10"];`
+par 
 ```
-  componentDidMount(){
-    // Get accounts
-    web3.eth.getAccounts((error, accounts) => {
-      this.setState({
-        XuserAccount: accounts[0],
-        OuserAccount: accounts[1] 
-       })
+web3.eth.getAccounts((error, accounts) => {
+   // do something after getting the accounts
+   // CUT_PASTE_HERE 
+})
+```
+then, cut and paste 
+```
+this.setState({
+  allAccounts: accounts,
+  XuserAccount: accounts[0],
+  OuserAccount: accounts[1] 
+  })
+```
+instead of ` // CUT_PASTE_HERE `
+
+
+### 04.02 - Affichage
+Après avoir obtenu les comptes, nous allons vouloir mettre les mettre à jour, pour cela, nous allons créer la fonction: ShowBalances()
+
+Juste après la fonction précédante qui obtient les comptes :
+```
+.then(()=>{
+    this.ShowBalances()
+  })
+```
+ShowBalances() n'hésite pas encore, nous allons la créer en juste après omponentDidMount()
+```
+// Show X and O balances
+ShowBalances(){
+  // Getting X user balance
+  web3.eth.getBalance(this.state.XuserAccount)
+  .then((result)=>{
+    this.setState({
+      XuserBalance: result/1000000000000000000
     })
-    .then(()=>{
-      this.ShowBalances()
+  })
+  // Getting O user balance
+  web3.eth.getBalance(this.state.OuserAccount)
+  .then((result)=>{
+    this.setState({
+      OuserBalance: result/1000000000000000000
     })
-  }
+  })
+  // Show current bet
+  this.state.contract.methods.GetBet().call()
+  .then((result)=>{
+    // 1 ETH = 1000000000000000000 WEI
+      this.setState({currentBet: result/1000000000000000000});
+  })
+}
+```
+Cette fonction utilise une fonction par défaut de web3 pour obtenir la balance de chaque utilisateur et fait appelle à la fonction GetBet() de notre contrat pour obtenir le montant de Bet.
+
+
+## 05 - Modifier les fonctions pour communiquer avec la blockchain 
+
+### 05.01 - Mettre à jour les addresse des joueurs X et O
+Quand on choisi le compte correspondant pour le joueur X, il faut mettre à jour l'interface avec ShowBalance().
+Pour cela, simplement remplacer :
+`console.log("User X is: " + this.state.XuserAccount)`
+par 
+`this.ShowBalances()`
+Idem pour le joueur O.
+
+### 05.02 - Mettre à jour la fonction BuyIn()
+Les smart contract ETH fonctionnent avec des valeurs en Wei.
+<!-- (1 ETH = 1000000000000000000 Wei) -->
+Nous allons donc convertir 3 ETH en Wei en remplaçant la précédente définition de bet :
+`let bet = this.state.web3.utils.toWei('3', 'ether');`
+Ensuite nous allons appeler la fonction du smart contract BuyIn() pour les joueurs X et O.
+```
+this.state.contract.methods.BuyIn().send({from: this.state.XuserAccount, value: bet})
+this.state.contract.methods.BuyIn().send({from: this.state.OuserAccount, value: bet})
+
 ```
 
-
-### 04 Créer le contrat 
-	- Récupérer l’adresse du contrat et l'ABI
-
-ABI
-adresse 
-This.state
-
-GetBet
-
-## Rajouter les fonctions web3 au jeu 
-Ecrire la fonction send winner + rajouter if winner 
-Ecrire la fonction Bet on + rajouter le bouton 
-
-
+Et pour finir nous affichons les données reçus avec ShowBalances().
+```
+.then(()=>{
+  this.ShowBalances();
+})
+```
+### 05.03 - Mettre à jour la fonction IfWinner()
+S'il y a un vainqueur, nous appelons la fonction IfWinner() de notre smart contract à partir de l'adresse du vainqueur.
+Supprimer l'ensemble du corps de la fonction IfWinner() et remplaçer par:
+```
+console.log("Winner is: " + _winner)
+    if(_winner === 'X') {
+      this.state.contract.methods.IfWinner().send({from: this.state.XuserAccount})
+      .then(()=>{
+        this.ShowBalances()
+      })
+    }
+    else{
+      this.state.contract.methods.IfWinner().send({from: this.state.OuserAccount})
+      .then(()=>{
+        this.ShowBalances()
+      })
+    } 
+```
