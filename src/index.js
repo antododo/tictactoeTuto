@@ -88,6 +88,15 @@ class Game extends React.Component {
         "type": "function"
       },
       {
+        "constant": false,
+        "inputs": [],
+        "name": "IfWinner",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
         "constant": true,
         "inputs": [],
         "name": "GetBet",
@@ -102,20 +111,23 @@ class Game extends React.Component {
         "type": "function"
       },
       {
-        "constant": false,
-        "inputs": [],
-        "name": "IfWinner",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "winner",
+            "type": "address"
+          }
+        ],
+        "name": "Winner",
+        "type": "event"
       }
     ]
 
+    var contract = new this.state.web3.eth.Contract(contractABI, contractAddress)
+
     // **** 03.02 ****
-    this.setState({
-      contract: new this.state.web3.eth.Contract(contractABI, contractAddress)
-    })
+    this.setState({contract: contract})
 
     // **** 04.01 ****
     // Setting accounts
@@ -133,6 +145,15 @@ class Game extends React.Component {
       this.ShowBalances()
     })
 
+    contract.events.Winner((err, result) =>{
+      if (err) {
+        console.log(err);
+      }
+      if(result)
+      {
+        console.log("Solidity event - Winner is: " + result.args.winner);
+      }
+    });
   }
 
   // **** 04.02 ****

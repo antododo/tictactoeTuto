@@ -4,7 +4,7 @@ pragma solidity ^0.4.24;
 /// @author P2PMTL
 /// @notice This contract is for demo only
 /// @dev This contract is not really safe - lot of flaws 
-contract Winner {
+contract Game {
     
     // The current bet amount
     uint256 betAmount= 0;
@@ -12,7 +12,8 @@ contract Winner {
     uint256 numberOfPlayers = 0;
     // The mapping to know if an user (address) is a player
     mapping(address => bool) isPlayer;
-       
+
+    event Winner(address winner);
 
     /// @notice Enable a player to Buy In the Tictactoe game
     /// @dev String comparison may be inefficient
@@ -46,5 +47,8 @@ contract Winner {
         betAmount = 0;
         // Reset the number of player
         numberOfPlayers = 0;
+
+        // Emmit a event with the winner
+        emit Winner(msg.sender);
     }
 }
