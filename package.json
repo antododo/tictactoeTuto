@@ -5,7 +5,7 @@
   "dependencies": {
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
-    "react-scripts": "1.0.17",
+    "react-scripts": "5.0.1",
     "web3": "^1.0.0-beta.34",
     "yarn-install": "^1.0.0"
   },
